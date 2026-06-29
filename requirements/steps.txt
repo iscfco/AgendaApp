@@ -1,0 +1,6 @@
+Step 1: Reqs and Models                 [DONE]
+Step 2: Repository layer                [DONE]
+Step 3: Service layer                   [DONE]
+Step 4: Definir Views                   [DONE]
+Step 5: Crear Views                     [DONE]
+Step 6: Conectar Todo                   [PENDING]

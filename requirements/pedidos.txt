@@ -1,0 +1,45 @@
+Funtional requirements
+--------------------------------------------------------------------------------
+- Crear pedido
+    - Modelo de Datos:
+        - Autor                                 - Asignada por el Sistema
+        - Nombre de cliente                     - Asignada por el Usuario
+        - Numero de telefono del cliente        - Asignada por el Usuario
+        - Direccion del cliente                 - Asignada por el Usuario
+        - Precio total                          - Asignada por el Usuario
+        - Anticipo                              - Asignada por el Usuario
+        - Fecha de creacion                     - Asignada por el Sistema
+        - Fecha de entrega                      - Asignada por el Usuario
+        - Descripcion del pedido                - Asignada por el Usuario
+        - Estado del pedido                     - Asignada por el Usuario
+            - Pendiente
+            - Entregado
+        - Entregado por                         - Asignada por el Sistema
+        - Historial de cambios                  - Asignada por el Sistema
+        - Fecha de Almacenado en Historial      - Asignada por el Sistema
+--------------------------------------------------------------------------------
+- Actualizar pedido
+    - Datos modificables:
+        - Nombre de cliente                     - Asignada por el Usuario
+        - Numero de telefono del cliente        - Asignada por el Usuario
+        - Direccion del cliente                 - Asignada por el Usuario
+        - Precio total                          - Asignada por el Usuario
+        - Anticipo                              - Asignada por el Usuario
+        - Fecha de entrega                      - Asignada por el Usuario
+        - Descripcion del pedido                - Asignada por el Usuario
+        - Entregado por                        - Asignada por el Sistema
+    - Reglas de negocio:
+        - Se debe de guardar una captura de los cambios en el historial de cambios
+--------------------------------------------------------------------------------
+- Entregar/Cancelar pedido
+    - Reglas de negocio:
+        - Se actualiza el estado del pedido a Entregado/Cancelado
+        - Se debe de guardar una captura de los cambios en el historial de cambios
+--------------------------------------------------------------------------------
+- Buscar pedidos
+    - Obetener pedidos por las siguientes propiedades como filtros:
+        - Autor
+        - Nombre cliente
+        - Fecha de creacion
+        - Fecha de entrega
+        - Estado del pedido

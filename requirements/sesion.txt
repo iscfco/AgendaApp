@@ -1,0 +1,9 @@
+Funtional requirements
+--------------------------------------------------------------------------------
+- Iniciar sesion
+    - Datos:
+        - Correo electronico
+        - Contraseña
+    - Reglas de negocio:
+        - Al iniciar sesion la primera vez se debe de solicitar el cambio de contraseña
+--------------------------------------------------------------------------------

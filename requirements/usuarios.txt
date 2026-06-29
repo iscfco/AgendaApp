@@ -1,0 +1,51 @@
+Funtional requirements
+--------------------------------------------------------------------------------
+- Registrar usuario
+    - Datos:
+        - ID                                    - Asignada por el Sistema
+        - Nombre de usuario                     - Asignada por el Usuario - Idx
+        - Correo electronico                    - Asignada por el Usuario - Idx
+        - Contraseña                            - Asignada por el Sistema       - VARCHAR(100)
+        - Telefono                              - Asignada por el Usuario
+        - Actualizar contraseña                 - Asignada por el Sistema
+        - Rol                                   - Asignada por el Usuario - Idx
+            - Super Administrador
+            - Administrador
+            - Usuario
+        - Fecha de creacion                     - Asignada por el Sistema
+        - Fecha de actualizacion                - Asignada por el Sistema
+        - Estado                                - Asignada por el Usuario - Idx
+            - Activo
+            - Inactivo
+        - Historial de cambios                  - Asignada por el Sistema
+    - Reglas de negocio:
+        - Un Super Administrador puede registrar un usuario con rol con cualquier Rol
+        - Un Administrador puede registrar usuarios con rol de Administrador y Usuario
+        - Un usuario con rol "Usuario" no puede registrar usuarios
+        - Esta funcion retorna un usuario+pwd que sera compartido con el usuario final
+        - Los correos deben de ser unicos
+--------------------------------------------------------------------------------
+- Listar usuarios
+    - Listar por:
+        - Nombre de usuario
+        - Correo electronico
+        - Rol
+        - Estado
+    - Reglas de negocio:
+        - Un Super Administrador puede listar todos los usuarios
+        - Un Administrador puede listar solo los usuarios con rol de Administrador y Usuario
+        - Un usuario con rol "Usuario" no puede listar usuarios
+--------------------------------------------------------------------------------
+- Actualizar usuario
+    - Datos modificables:
+        - Nombre de usuario                    
+        - Correo electronico                    
+        - Telefono                             
+        - Rol                                   
+        - Estado
+        - PWD                               
+    - Reglas de negocio:
+        - Un Super Administrador puede actualizar cualquier usuario
+        - Un Administrador puede actualizar usuarios con rol de Administrador y Usuario
+        - Un usuario con rol "Usuario" no puede actualizar usuarios
+        - Se debe de guardar una captura de los cambios en el historial de cambios
