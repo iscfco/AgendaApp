@@ -10,6 +10,8 @@ import (
 	"errors"
 	"fmt"
 	"time"
+
+	"gorm.io/datatypes"
 )
 
 type UserService interface {
@@ -45,7 +47,7 @@ func CheckRole(requestorRole, userRole models.UserRole) error {
 }
 
 func (s *userService) RegisterNewUser(requestor, newUser models.User) (string, error) {
-	// Valida permisos
+	// Valida permisos, el superadmin no se valida porque puede crear cualquier rol
 	switch requestor.Role {
 	case models.UserRoleUser:
 		return "", fmt.Errorf("%w: usuario con rol 'User' no puede crear nuevos usuarios", errorhandling.ErrForbidden)
@@ -68,7 +70,7 @@ func (s *userService) RegisterNewUser(requestor, newUser models.User) (string, e
 		return "", fmt.Errorf("%w: error al encryptar password: %v", errorhandling.ErrInternal)
 	}
 
-	newUser.UpdatePassword = true
+	newUser.RequiresPasswordUpdate = true
 	newUser.CreatedAt = time.Now()
 	newUser.UpdatedAt = time.Now()
 
@@ -85,10 +87,10 @@ func (s *userService) ListUsers(requestor, query models.User) ([]models.User, er
 
 	// Preparar query con las propiedades permitidas para la busqueda
 	query = models.User{
-		Username: query.Username,
-		Email:    query.Email,
-		Role:     query.Role,
-		Status:   query.Status,
+		UserFullName: query.UserFullName,
+		Email:        query.Email,
+		Role:         query.Role,
+		Status:       query.Status,
 	}
 
 	return s.repo.ReadByQuery(query)
@@ -112,12 +114,12 @@ func (s *userService) UpdateUser(requestor, model models.User) error {
 	// Preparar modelo con las propiedades permitidas para modificar
 	// - Prepara propiedades base
 	updates := models.User{
-		Username:  model.Username,
-		Email:     model.Email,
-		Phone:     model.Phone,
-		Role:      model.Role,
-		Status:    model.Status,
-		UpdatedAt: time.Now(),
+		UserFullName: model.UserFullName,
+		Email:        model.Email,
+		Phone:        model.Phone,
+		Role:         model.Role,
+		Status:       model.Status,
+		UpdatedAt:    time.Now(),
 	}
 
 	// - Preparar pws si se modifica
@@ -127,14 +129,14 @@ func (s *userService) UpdateUser(requestor, model models.User) error {
 			return fmt.Errorf("%w: error al encryptar password: %v", errorhandling.ErrInternal, err)
 		}
 
-		updates.UpdatePassword = true
+		updates.RequiresPasswordUpdate = true
 	}
 
-	// - Preparar change log
+	// - Preparar change history
 	{
 		// Convertir string a arreglo de users
 		currentChangeLog := []models.User{}
-		err = json.Unmarshal([]byte(userInDB.ChangeLog), &currentChangeLog)
+		err = json.Unmarshal([]byte(userInDB.ChangeHistory), &currentChangeLog)
 		if err != nil {
 			return fmt.Errorf("%w: error al deserializar change log: %v", errorhandling.ErrInternal, err)
 		}
@@ -150,7 +152,7 @@ func (s *userService) UpdateUser(requestor, model models.User) error {
 		}
 
 		// Actualizar change log
-		updates.ChangeLog = string(newChangeLog)
+		updates.ChangeHistory = datatypes.JSON(newChangeLog)
 	}
 
 	return s.repo.Update(updates)

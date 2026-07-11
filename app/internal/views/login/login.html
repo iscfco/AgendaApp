@@ -1,0 +1,75 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="/static/css/bootstrap.min.css"> -->
+    <style>
+      .login-bg {
+        background-image: url('/static/img/login_bg.jpg'); 
+        
+        /* Centra la imagen vertical y horizontalmente */
+        background-position: center center; 
+        
+        /* Evita que la imagen se repita en pantallas grandes */
+        background-repeat: no-repeat; 
+        
+        /* Hace que la imagen cubra toda la pantalla sin deformarse */
+        background-size: cover; 
+        
+        /* Mantiene el fondo fijo al hacer scroll */
+        background-attachment: fixed; 
+      }
+
+      .login-title {
+          color: rgb(56, 182, 255);
+
+      }
+    </style>
+  </head>
+  <body class="login-bg">
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="card p-4 shadow rounded-4" style="width: 100%; max-width: 400px;" >
+            <h3 class="card-title text-center mb-4 login-title fs-2">Iniciar Sesión</h3>
+
+            <!-- BLOQUE DE ERROR NUEVO: Solo se pintará si existe la variable error -->
+            {{if .error}}
+            <div class="alert alert-danger py-2 fs-7 text-center" role="alert">
+                {{.error}}
+            </div>
+            {{end}}
+
+            <form action="/login" method="POST">
+                <!-- Email -->
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" value="{{.oldEmail}}"> <!-- Mantener email en caso de error -->
+                </div>
+
+                <!-- Password -->
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control">
+                </div>
+
+                <!-- Radio Button 
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="radio" name="radioDefault" id="radioDefault1">
+                    <label class="form-check-label" for="radioDefault1">
+                        Recordarme por 10 dias
+                    </label>
+                </div> -->
+
+                <!-- Button Entrar -->
+                <button type="submit" class="btn btn-primary w-100">Entrar</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <!-- <script src="/static/js/bootstrap.bundle.min.js"></script> -->
+  </body>
+</html>

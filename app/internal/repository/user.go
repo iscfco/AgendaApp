@@ -16,7 +16,7 @@ type UserRepository interface {
 	Delete(id uint) error
 }
 
-func NewUserFactory(db *gorm.DB) UserRepository {
+func NewUserRepository(db *gorm.DB) UserRepository {
 	return &userRepo{db: db}
 }
 

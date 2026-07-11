@@ -1,0 +1,23 @@
+# 1. Usamos la imagen oficial de Go para desarrollo
+FROM golang:1.25-alpine
+
+# 2. Creamos la carpeta de trabajo dentro del contenedor
+WORKDIR /agenda-app
+
+# 3. Instalamos Air desde su repositorio completo en GitHub para el autorefresh
+RUN go install github.com/air-verse/air@latest
+
+# 4. Copiamos los archivos de dependencias de Go
+COPY go.mod go.sum ./
+
+# 5. Descargamos las dependencias en la caché de Docker
+RUN go mod download
+
+# 6. Copiamos el resto del código de nuestra computadora al contenedor
+COPY . .
+
+# 7. Exponemos el puerto de la aplicación
+EXPOSE 8080
+
+# 8. Ejecutamos Air en cuanto el contenedor se encienda
+CMD ["air", "--build.cmd", "go build -o ./bin/api ./app/cmd/server/main.go", "--build.entrypoint", "./bin/api", "--build.poll=true"]
