@@ -18,6 +18,7 @@ type UserService interface {
 	RegisterNewUser(requestor, user models.User) (string, error)
 	ListUsers(requestor, query models.User) ([]models.User, error)
 	UpdateUser(requestor, model models.User) error
+	GetUserByEmail(email string) (models.User, error)
 }
 
 func NewUserService(r repository.UserRepository) UserService {
@@ -156,4 +157,17 @@ func (s *userService) UpdateUser(requestor, model models.User) error {
 	}
 
 	return s.repo.Update(updates)
+}
+
+func (s *userService) GetUserByEmail(email string) (models.User, error) {
+	results, err := s.repo.ReadByQuery(models.User{Email: email})
+	if err != nil {
+		return models.User{}, fmt.Errorf("%w: error al recuperar usuario por email", err)
+	}
+
+	if len(results) == 0 {
+		return models.User{}, errorhandling.ErrNotFoundError
+	}
+
+	return results[0], nil
 }

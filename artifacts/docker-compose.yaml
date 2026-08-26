@@ -16,6 +16,11 @@ services:
       - db_data:/var/lib/mysql
     networks:
       - red-app
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uadmin-dev", "-ppwd-dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   agenda-app-svc:
     build: 
@@ -32,12 +37,13 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - red-app
     volumes:
       - ../:/agenda-app
-      - /agenda-app/bin # <-- AÑADE ESTA LÍNEA DE PROTECCIÓN
+      - /agenda-app/bin 
 
 volumes:
   db_data:

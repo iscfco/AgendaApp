@@ -13,8 +13,15 @@ import (
 // DB es la instancia global de GORM que usarán tus repositorios [cite: 67, 72]
 var DB *gorm.DB
 
+func GetDB() *gorm.DB {
+	if DB == nil {
+		panic("No se ha inicializado la base de datos")
+	}
+	return DB
+}
+
 // InitDB inicializa la conexión a MySQL usando GORM
-func InitDB(user, pass, host, port, dbName string) {
+func InitDB(user, pass, host, port, dbName string) *gorm.DB {
 	// Formato DSN para MySQL [cite: 42]
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=true&loc=Local",
 		user, pass, host, port, dbName)
@@ -40,4 +47,6 @@ func InitDB(user, pass, host, port, dbName string) {
 	sqlDB.SetConnMaxLifetime(5 * time.Minute) // Tiempo de vida de conexión [cite: 42]
 
 	fmt.Println("Conexión exitosa a MySQL mediante GORM")
+
+	return DB
 }

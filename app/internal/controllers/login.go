@@ -5,19 +5,25 @@ import (
 	"html/template"
 	"net/http"
 
+	"agenda-app/app/internal/errorhandling"
 	"agenda-app/app/internal/services"
+	"agenda-app/app/internal/utils"
+	"agenda-app/app/internal/utils/logs"
 	"agenda-app/app/internal/utils/sessions"
 	"agenda-app/app/internal/views"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 type LoginController struct {
-	service services.LoginService
+	userSvc services.UserService
 }
 
-func NewLoginController(s services.LoginService) *LoginController {
-	return &LoginController{service: s}
+func NewLoginController(us services.UserService) *LoginController {
+	return &LoginController{
+		userSvc: us,
+	}
 }
 
 // Create maneja la petición GET /login
@@ -66,6 +72,9 @@ func (ctrl *LoginController) GetLogin(c *gin.Context) {
 func (ctrl *LoginController) Login(c *gin.Context) {
 	email := c.PostForm("email")
 	password := c.PostForm("password")
+	ctx := c.Request.Context()
+	ctx = logs.LoggerWithFields(ctx, zap.String("email", email))
+	logs.Logger(ctx).Info("attempting login")
 
 	// 1. Crear una función interna para renderizar el HTML del embed con datos
 	renderLoginWithError := func(status int, mensajeError string) {
@@ -100,9 +109,20 @@ func (ctrl *LoginController) Login(c *gin.Context) {
 	}
 
 	// 3. Validación de credenciales
-	// TODO: Move to DB queries
-	if !(email == "admin@correo.com" && password == "123456") {
-		// Login fallido: renderizamos usando nuestra función utilitaria
+	// Obtener usuario desde la DB
+	user, err := ctrl.userSvc.GetUserByEmail(email)
+	if err != nil { // Login fallido: renderizamos usando nuestra función utilitaria
+		if err == errorhandling.ErrNotFoundError {
+			logs.Logger(ctx).Info("Status 401 por usuario no encontrado")
+			renderLoginWithError(http.StatusUnauthorized, "Credenciales incorrectas")
+			return
+		}
+
+		renderLoginWithError(http.StatusInternalServerError, "Error interno")
+		return
+	}
+
+	if !utils.CheckPasswordHash(password, user.Password) {
 		renderLoginWithError(http.StatusUnauthorized, "Credenciales incorrectas")
 		return
 	}
