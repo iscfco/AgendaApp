@@ -21,7 +21,7 @@ func GetDB() *gorm.DB {
 }
 
 // InitDB inicializa la conexión a MySQL usando GORM
-func InitDB(user, pass, host, port, dbName string) *gorm.DB {
+func InitDBOld(user, pass, host, port, dbName string) *gorm.DB {
 	// Formato DSN para MySQL [cite: 42]
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=true&loc=Local",
 		user, pass, host, port, dbName)

@@ -9,10 +9,11 @@ import (
 
 // Config almacena las variables de entorno de la aplicación
 type Config struct {
-	Port  string
-	DBURI string
-	Env   string
-	DB    DB
+	Port      string
+	DBURI     string
+	Env       string
+	DB        DB
+	Bootstrap Bootstrap
 }
 
 type DB struct {
@@ -21,6 +22,16 @@ type DB struct {
 	Host   string
 	Port   string
 	DBName string
+}
+
+type Bootstrap struct {
+	SuperAdmin SuperAdmin
+}
+
+type SuperAdmin struct {
+	Email    string
+	Password string
+	Name     string
 }
 
 // LoadConfig lee el archivo .env y mapea los valores
@@ -40,6 +51,13 @@ func LoadConfig() *Config {
 			Host:   getEnv("DB_HOST", ""),
 			Port:   getEnv("DB_PORT", ""),
 			DBName: getEnv("DB_NAME", ""),
+		},
+		Bootstrap: Bootstrap{
+			SuperAdmin: SuperAdmin{
+				Email:    getEnv("SUPER_ADMIN_EMAIL", ""),
+				Password: getEnv("SUPER_ADMIN_PASSWORD", ""),
+				Name:     getEnv("SUPER_ADMIN_NAME", ""),
+			},
 		},
 	}
 }
