@@ -1,23 +1,22 @@
 version: '3.8'
 
 services:
-  db:
-    image: mysql:8.0
+
+  agenda-app-db-svc:
+    image: postgres:18
     container_name: agenda-app-db
-    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: admin-pwd-dev
-      MYSQL_DATABASE: agenda-app-db
-      MYSQL_USER: admin-dev
-      MYSQL_PASSWORD: pwd-dev
+      POSTGRES_DB: agenda-app-db
+      POSTGRES_USER: admin-dev
+      POSTGRES_PASSWORD: pwd-dev
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - db_data:/var/lib/mysql
+      - db_data:/var/lib/postgresql
     networks:
       - red-app
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uadmin-dev", "-ppwd-dev"]
+      test: ["CMD-SHELL", "pg_isready -U admin-dev -d agenda-app-db"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -29,15 +28,11 @@ services:
     container_name: agenda-app-api
     restart: always
     environment:
-      - DB_HOST=db
-      - DB_PORT=3306
-      - DB_USER=admin-dev
-      - DB_PASSWORD=pwd-dev
-      - DB_NAME=agenda-app-db
+      - IN_DOCKER=true
     ports:
       - "8080:8080"
     depends_on:
-      db:
+      agenda-app-db-svc:
         condition: service_healthy
     networks:
       - red-app

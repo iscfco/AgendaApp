@@ -3,6 +3,7 @@ import subprocess
 
 from artifacts.run.build import execute_docker_build
 from artifacts.run.run import execute_docker_run
+from artifacts.run.metrics import execute_metrics
 
 # List of available commands
 COMMANDS = {
@@ -11,6 +12,7 @@ COMMANDS = {
     "stop": 'docker-compose -f .\\artifacts\\docker-compose.yaml down',
     "lint": '...',
     "test": '...',
+    "metrics": execute_metrics,
 }
 
 def print_help():

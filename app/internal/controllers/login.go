@@ -122,7 +122,8 @@ func (ctrl *LoginController) Login(c *gin.Context) {
 		return
 	}
 
-	if !utils.CheckPasswordHash(password, user.Password) {
+	if !utils.CheckPasswordHash(password, user.PasswordHash) {
+		logs.Logger(ctx).Info("pasword not match", zap.String("password", password), zap.String("hash", user.PasswordHash))
 		renderLoginWithError(http.StatusUnauthorized, "Credenciales incorrectas")
 		return
 	}

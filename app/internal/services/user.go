@@ -66,7 +66,7 @@ func (s *userService) RegisterNewUser(requestor, newUser models.User) (string, e
 	}
 
 	// Hashea la contraseña
-	newUser.Password, err = utils.HashPassword(newUser.Password)
+	newUser.PasswordHash, err = utils.HashPassword(newUser.Password)
 	if err != nil {
 		return "", fmt.Errorf("%w: error al encryptar password: %v", errorhandling.ErrInternal)
 	}
