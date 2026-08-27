@@ -21,17 +21,13 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		// 2. Verificamos si ese ID realmente existe en nuestro mapa del servidor
-		email, existe := sessions.ObtenerUsuarioPorSesion(sessionID)
+		_, existe := sessions.ObtenerSessionDataPorSesion(sessionID)
 		if !existe {
 			// El ID es falso o el servidor se reinició y la memoria se borró
 			c.Redirect(http.StatusSeeOther, "/login")
 			c.Abort()
 			return
 		}
-
-		// 3. Opcional: Guardamos el email del usuario en el contexto de Gin
-		// por si tus otras rutas (como /dashboard) quieren saber qué usuario inició sesión.
-		c.Set("user_email", email)
 
 		c.Next()
 	}

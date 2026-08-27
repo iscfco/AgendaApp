@@ -1,0 +1,36 @@
+.my-input {
+    height: 20px;
+    min-height: 12px;
+}
+
+.my-label {
+    font-size: small !important;
+    font-weight: 700 !important;
+}
+
+.my-dropdown {
+    height: 26px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+.fecha-tag {
+    padding-top: 0;
+    padding-left: 5px;
+    padding-right: 5px !important;
+    padding-bottom: 0;
+    font-size: 12px;
+    font-weight: 700;
+    width: 32px;
+}
+
+.input-group{
+    width: 90% !important;
+}
+
+.my-button {
+    font-size: small;
+    padding: 0;
+    font-weight: 700;
+    margin-top: 10px;
+}

@@ -28,26 +28,8 @@ func NewLoginController(us services.UserService) *LoginController {
 
 // Create maneja la petición GET /login
 func (ctrl *LoginController) GetLogin(c *gin.Context) {
-	// tmpl, err := template.New("base").ParseFS(
-	// 	views.ViewsFS,
-	// 	"layout/base.html",
-	// 	"orders/create.html",
-	// )
-	// if err != nil {
-	// 	c.String(http.StatusInternalServerError, "Error cargando plantillas: %v", err)
-	// 	return
-	// }
-
-	// // Ejecutamos el template apuntando a "base"
-	// err = tmpl.Execute(c.Writer, gin.H{
-	// 	"title": "Registro de Órdenes",
-	// })
-	// if err != nil {
-	// 	c.String(http.StatusInternalServerError, "Error renderizando: %v", err)
-	// }
-
 	// Leemos el archivo del login desde tu embed
-	htmlBytes, err := views.ViewsFS.ReadFile("login/login.html") // Ajusta la ruta a tu archivo real
+	htmlBytes, err := views.ViewsFS.ReadFile("login/login.html")
 	if err != nil {
 		c.String(http.StatusInternalServerError, "Error al cargar la página")
 		return
@@ -64,8 +46,6 @@ func (ctrl *LoginController) GetLogin(c *gin.Context) {
 	c.Status(http.StatusOK)
 	c.Header("Content-Type", "text/html; charset=utf-8")
 
-	// Ejecutamos pasando valores VACÍOS (gin.H{}) para que el {{if .error}} se evalúe como falso
-	// y desaparezca por completo de la pantalla.
 	tmpl.Execute(c.Writer, gin.H{})
 }
 
@@ -130,18 +110,18 @@ func (ctrl *LoginController) Login(c *gin.Context) {
 
 	// 4. Guardar la sesión
 	tokenDeSesion := sessions.GenerarSessionID()
-	sessions.GuardarSesion(tokenDeSesion, email)
+	sessions.GuardarSesion(tokenDeSesion, user)
 
 	// Guardamos la cookie en el navegador del usuario
 	c.SetCookie(
-		"session_token", // Nombre de la cookie (debe coincidir con tu Middleware)
-		tokenDeSesion,   // Valor que se guardará
-		60*60*24,        // Tiempo de vida en SEGUNDOS ( 24 hrs = 60 segundos * 60 minutos * 24 horas )
-		"/",             // Ruta donde la cookie es válida ("/" significa en toda la app)
-		"localhost",     // Dominio de tu servidor
-		false,           // Secure: true solo para HTTPS.
-		true,            // HttpOnly: Evita que JavaScript robe la cookie (Protección XSS).
+		utils.SessionCookieHeader, // Nombre de la cookie (debe coincidir con tu Middleware)
+		tokenDeSesion,             // Valor que se guardará
+		60*60*24,                  // Tiempo de vida en SEGUNDOS ( 24 hrs = 60 segundos * 60 minutos * 24 horas )
+		"/",                       // Ruta donde la cookie es válida ("/" significa en toda la app)
+		"localhost",               // Dominio del servidor
+		false,                     // Secure: true solo para HTTPS.
+		true,                      // HttpOnly: Evita que JavaScript robe la cookie (Protección XSS).
 	)
 
-	c.Redirect(http.StatusSeeOther, "/dashboard")
+	c.Redirect(http.StatusSeeOther, "/")
 }
