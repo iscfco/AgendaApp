@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	sessionsMap = make(map[string]string)
+	sessionsMap = make(map[string]interface{})
 	mutex       sync.RWMutex
 )
 
@@ -18,21 +18,21 @@ func GenerarSessionID() string {
 	return hex.EncodeToString(b)
 }
 
-// GuardarSesion anota el ID de sesión asociado al email en nuestro mapa
-func GuardarSesion(sessionID string, email string) {
+// GuardarSesion anota el ID de sesión asociado a la data que queremos guardar
+func GuardarSesion(sessionID string, sessionData interface{}) {
 	mutex.Lock()
 	defer mutex.Unlock()
 
-	sessionsMap[sessionID] = email
+	sessionsMap[sessionID] = sessionData
 }
 
-// ObtenerUsuarioPorSesion busca si el ID existe en el mapa y devuelve el email
-func ObtenerUsuarioPorSesion(sessionID string) (string, bool) {
+// ObtenerSessionDataPorSesion busca si el ID existe en el mapa y devuelve la data
+func ObtenerSessionDataPorSesion(sessionID string) (interface{}, bool) {
 	mutex.RLock()
 	defer mutex.RUnlock()
 
-	email, existe := sessionsMap[sessionID]
-	return email, existe
+	sessionData, existe := sessionsMap[sessionID]
+	return sessionData, existe
 }
 
 // EliminarSesion borra el registro (útil para el Logout)

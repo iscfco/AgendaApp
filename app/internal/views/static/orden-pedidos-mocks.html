@@ -1,0 +1,614 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="/static/css/bootstrap.min.css"> -->
+     <style>
+        .my-input {
+          height: 20px;
+          min-height: 12px;
+        }
+
+        .my-label {
+          font-size: small !important;
+          font-weight: 700 !important;
+        }
+
+        .my-dropdown {
+          height: 26px;
+          padding-top: 0px;
+          padding-bottom: 0px;
+        }
+
+        .fecha-tag {
+          padding-top: 0;
+          padding-left: 5px;
+          padding-right: 5px !important;
+          padding-bottom: 0;
+          font-size: 12px;
+          font-weight: 700;
+          width: 32px;
+        }
+
+        .input-group{
+          width: 90% !important;
+        }
+
+        .my-button {
+          font-size: small;
+          padding: 0;
+          font-weight: 700;
+          margin-top: 10px;
+        }
+     </style>
+  </head>
+  <body class="bg-dark">
+    <div class="container vh-100 bg-body">
+      <div class="row position-relative" style="padding: 0;">
+        <div class="container">
+          <a href="#" class="btn btn-primary rounded-circle shadow-lg position-absolute" style="bottom: 20px; right: 20px; z-index: 1050; width: 60px; height: 60px; padding: 1px;">
+            <i class="fas fa-plus fs-2 fw-bold">+</i>
+          </a>
+        </div>
+        <div class="container">
+          <a href="#" class="btn btn-primary rounded-circle shadow-lg position-absolute" style="bottom: 90px; right: 20px; width: 60px; height: 60px; padding: 15px;">
+            <img src="../../public/img/sort.svg" 
+                          alt="Logo de la Empresa" 
+                          height="30" 
+                          class="d-block"
+                          style="filter: brightness(0) invert(1);">
+          </a>
+        </div>
+        <div class="col-12" style="padding: 0; background-color: rgb(236 236 236);">
+          <div class="d-flex align-items-start"  style="">
+            
+            <!-- ======================================= Barra Lateral Izquierda ==================================== -->
+            <div class="col-3 vh-100 nav flex-column nav-pills rounded-end-5" style="background-color: rgb(20 18 35); padding: 2rem;" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+              <div class="container-fluid d-flex justify-content-center">
+                  <a class="navbar-brand mb-4 bg-light shadow-lg p-3 rounded-4">
+                      <img src="../../public/img/logo.png" 
+                          alt="Logo de la Empresa" 
+                          height="130" 
+                          class="d-block">
+                  </a>
+              </div>
+              <div class="container d-flex justify-content-center">
+                  <div class="mb-4 mx-auto d-sm-flex align-items-center">
+                      <img class="rounded-circle" style="width: 80px; margin-right: 1rem;" src="https://avatars0.githubusercontent.com/u/39916324?s=460&amp;u=602ca47fcce463981a2511a21148236f304ec934&amp;v=4" alt="">
+                      <div class="">
+                          <span class="text-light" style="font-weight: 900; color: #ffffff; display: block;">Jorge H.</span>
+                          <span class="text-white-50 text-break" style="font-weight: 500; color: #ffffff; display: block;">jorge.santosabc.huehuet.ek@gmail.com.mx</span>
+                          <div class="container justify-content-center" style=" border-radius: 100px; background: linear-gradient(45deg, rgb(139 86 255), rgb(92 224 230));;">
+                            <span class="text-white" style="font-size: 0.8rem; font-weight: 900;"> Super Admin</span>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <button class="nav-link active" id="v-pills-pedidos-tab" data-bs-toggle="pill" data-bs-target="#v-pills-pedidos" type="button" role="tab" aria-controls="v-pills-pedidos" aria-selected="true">
+                Pedidos
+              </button>
+              <button class="nav-link" id="v-pills-usuarios-tab" data-bs-toggle="pill" data-bs-target="#v-pills-usuarios" type="button" role="tab" aria-controls="v-pills-usuarios" aria-selected="false">
+                Usuarios
+              </button>
+              <button class="nav-link mt-auto" id="v-logout-tab" type="button" role="tab" aria-controls="v-pills-usuarios" aria-selected="false">
+                  Cerrar Sesion
+              </button>
+            </div>
+
+            <!-- ======================================= Contenidos ==================================== -->
+            <div class="col-9 vh-100 tab-content p-5 d-flex flex-column overflow-auto" id="v-pills-tabContent" style="background-color: rgb(236 236 236); padding: 2rem;">
+              
+              <!-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TAB: PEDIDOS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> -->
+              <div class="tab-pane fade show active" id="v-pills-pedidos" role="tabpanel" aria-labelledby="v-pills-pedidos-tab" tabindex="0">
+                <div class="d-flex flex-column flex-grow-1">
+                  <!-- ********************** Titulo ********************** -->
+                  <div>
+                    <p class="fs-4 fw-semibold mb-0" style="display: inline-block;">Filtros de Busqueda de Pedidos</p>
+                  </div>
+                  <!-- ********************** Filtros ********************** -->
+                  <table style="width: 100%;">
+                    <tbody>
+                      <tr>
+                        <!-- ********************** Filtro: Nombre del Usuario ********************** -->
+                        <td style="padding-right: 32px;">
+                          <div class="">
+                            <label for="exampleInputEmail1" class="my-label">Nombre del Usuario</label>
+                            <input type="email" class="form-control form-control-sm my-input" id="exampleInputEmail1">
+                          </div>
+                        </td>
+                        <!-- ********************** Filtro: Palabra Clave ********************** -->
+                        <td style="padding-right: 32px;">
+                          <div class="">
+                            <label for="exampleInputPassword1" class="my-label">Palabra Clave</label>
+                            <input type="text" class="form-control form-control-sm my-input" id="exampleInputPassword1">
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <!-- ********************** Filtro: Nombre del Cliente ********************** -->
+                        <td style="padding-right: 32px;">
+                          <div class="">
+                            <label for="exampleInputPassword1" class="my-label">Nombre del Cliente</label>
+                            <input type="text" class="form-control form-control-sm my-input" id="exampleInputPassword1">
+                          </div>
+                        </td>
+                        
+                        <td style="padding-right: 32px;">
+                          <!-- ********************** NESTED TABLE ********************** -->
+                          <table style="width: 100%;">
+                            <tbody>
+                              <tr>
+                                <td colspan="2">
+                                  <label for="fechaSeleccionada" class="my-label">Fecha de Creacion</label>
+                                </td>
+                                <td>
+                                  <label for="exampleInputPassword1" class="my-label">Estado</label><br>
+                                </td>
+                              </tr>
+                              <tr>
+                                <!-- ********************** Filtro: Fecha de creacion ********************** -->
+                                <td>
+                                    <!-- ############ DE ############ -->
+                                    <div class="input-group">
+                                      <span class="input-group-text bg-light fecha-tag" id="basic-addon-calendar">
+                                        De
+                                      </span>
+                                      <input type="date" 
+                                            class="form-control my-input" 
+                                            id="fechaSeleccionada" 
+                                            name="fecha" 
+                                            aria-describedby="basic-addon-calendar">
+                                    </div>
+                                </td>
+                                <td>
+                                    <!-- ############ A ############ -->
+                                    <div class="input-group">
+                                      <span class="input-group-text bg-light fecha-tag" id="basic-addon-calendar">
+                                        A
+                                      </span>
+                                      <input type="date" 
+                                            class="form-control my-input" 
+                                            id="fechaSeleccionada" 
+                                            name="fecha" 
+                                            aria-describedby="basic-addon-calendar">
+                                    </div>
+                                </td>
+                                <!-- ********************** Filtro: Estado ********************** -->
+                                <td>
+                                  <div class="btn-group">
+                                    <button type="button" class="btn btn-info dropdown-toggle my-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                      Estado
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                      <li><a class="dropdown-item" href="#">Todos</a></li>
+                                      <li><a class="dropdown-item" href="#">Pendiente</a></li>
+                                      <li><a class="dropdown-item" href="#">Entregado</a></li>
+                                    </ul>
+                                  </div>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  
+                  <!-- ********************** BUSCAR ********************** -->
+                  <button type="submit" class="btn btn-primary my-button">Buscar</button>
+                  
+                  <!-- ********************** Resultados ********************** -->
+                  <div class="mb-3" style="background-color: #ffffff; padding: 20px; border-radius: 10px; margin-top: 20px; width: 100%; ">
+                    <div class="d-flex flex-column flex-grow-1">
+                      
+                      <!-- ||||||||||||||||||| Card ||||||||||||||||||| -->
+                      <div class="card w-100 mb-3 position-relative">
+                        <div class="card-body container p-2">
+                          
+                          <a href="URL_A_DONDE_IR" class="stretched-link text-decoration-none"></a>
+
+                          <div class="row">
+                            <!-- ############## Icono ############## -->
+                            <div class="col-2">
+                              <div class="container justify-content-center">
+                                <img src="../../public/img/package.svg" 
+                                          alt="Logo de la Empresa" 
+                                          height="80"
+                                          class="rounded-circle border border-secondary-subtle mb-2">
+                                <div class="container justify-content-center" style=" border-radius: 100px; background: linear-gradient(45deg, rgb(250 238 33), rgb(95 234 38), rgb(0 255 255));">
+                                  <span class="text-dark" style="font-size: 0.8rem; font-weight: 700;">Entregado</span>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- ############## Meta Datos ############## -->
+                            <div class="col-10">
+                              <div class="container">
+                                <div class="row">
+                                  <span class="fw-bold fs-5">Ernesto Javier Pech Cruz</span> <br>
+                                  <div class="col-6">
+                                    <span class="fw-bold">Telefono: </span> <span>982 423 4561</span> <br>
+                                    <span class="fw-bold">Creado: </span> <span>01/01/2023</span> <br>
+                                    <span class="fw-bold">Entregar: </span> <span>01/01/2023</span> <br>
+                                    <span class="fw-bold">Precio Total: </span> <span>$1,000</span>
+                                  </div>
+                                  <div class="col-6">
+                                    <span class="fw-bold">Descripcion: </span> <span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum, ducimus. Voluptatum, ducimus.</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div> 
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- ||||||||||||||||||| Card ||||||||||||||||||| -->
+                      <div class="card w-100 mb-3">
+                        <div class="card-body container p-2">
+                          <div class="row">
+                            <!-- ############## Icono ############## -->
+                            <div class="col-2">
+                              <div class="container justify-content-center">
+                                <img src="../../public/img/package.svg" 
+                                          alt="Logo de la Empresa" 
+                                          height="80"
+                                          class="rounded-circle border border-secondary-subtle mb-2">
+                                <div class="container justify-content-center" style=" border-radius: 100px; background: linear-gradient(45deg, rgb(255 53 51), rgb(255 137 74));">
+                                  <span class="text-white" style="font-size: 0.8rem; font-weight: 700;">Pendiente</span>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- ############## Meta Datos ############## -->
+                            <div class="col-10">
+                              <div class="container">
+                                <div class="row">
+                                  <span class="fw-bold fs-5">Ernesto Javier Pech Cruz</span> <br>
+                                  <div class="col-6">
+                                    <span class="fw-bold">Telefono: </span> <span>982 423 4561</span> <br>
+                                    <span class="fw-bold">Creado: </span> <span>01/01/2023</span> <br>
+                                    <span class="fw-bold">Entregar: </span> <span>01/01/2023</span> <br>
+                                    <span class="fw-bold">Precio Total: </span> <span>$1,000</span>
+                                  </div>
+                                  <div class="col-6">
+                                    <span class="fw-bold">Descripcion: </span> <span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum, ducimus. Voluptatum, ducimus.</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div> 
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- ||||||||||||||||||| Card ||||||||||||||||||| -->
+                      <div class="card w-100 mb-3">
+                        <div class="card-body container p-2">
+                          <div class="row">
+                            <!-- ############## Icono ############## -->
+                            <div class="col-2">
+                              <div class="container justify-content-center">
+                                <img src="../../public/img/package.svg" 
+                                          alt="Logo de la Empresa" 
+                                          height="80"
+                                          class="rounded-circle border border-secondary-subtle mb-2">
+                                <div class="container justify-content-center" style=" border-radius: 100px; background: linear-gradient(45deg, rgb(255 53 51), rgb(255 137 74));">
+                                  <span class="text-white" style="font-size: 0.8rem; font-weight: 700;">Pendiente</span>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- ############## Meta Datos ############## -->
+                            <div class="col-10">
+                              <div class="container">
+                                <div class="row">
+                                  <span class="fw-bold fs-5">Ernesto Javier Pech Cruz</span> <br>
+                                  <div class="col-6">
+                                    <span class="fw-bold">Telefono: </span> <span>982 423 4561</span> <br>
+                                    <span class="fw-bold">Creado: </span> <span>01/01/2023</span> <br>
+                                    <span class="fw-bold">Entregar: </span> <span>01/01/2023</span> <br>
+                                    <span class="fw-bold">Precio Total: </span> <span>$1,000</span>
+                                  </div>
+                                  <div class="col-6">
+                                    <span class="fw-bold">Descripcion: </span> <span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum, ducimus. Voluptatum, ducimus.</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div> 
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- ||||||||||||||||||| Card ||||||||||||||||||| -->
+                      <div class="card w-100 mb-3">
+                        <div class="card-body container p-2">
+                          <div class="row">
+                            <!-- ############## Icono ############## -->
+                            <div class="col-2">
+                              <div class="container justify-content-center">
+                                <img src="../../public/img/package.svg" 
+                                          alt="Logo de la Empresa" 
+                                          height="80"
+                                          class="rounded-circle border border-secondary-subtle mb-2">
+                                <div class="container justify-content-center" style=" border-radius: 100px; background: linear-gradient(45deg, rgb(255 53 51), rgb(255 137 74));">
+                                  <span class="text-white" style="font-size: 0.8rem; font-weight: 700;">Pendiente</span>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- ############## Meta Datos ############## -->
+                            <div class="col-10">
+                              <div class="container">
+                                <div class="row">
+                                  <span class="fw-bold fs-5" style="color: linear-gradient(45deg, rgb(255 53 51), rgb(255 137 74));">
+                                    Ernesto Javier Pech Cruz
+                                  </span> <br>
+                                  <div class="col-6">
+                                    <span class="fw-bold">Telefono: </span> <span>982 423 4561</span> <br>
+                                    <span class="fw-bold">Creado: </span> <span>01/01/2023</span> <br>
+                                    <span class="fw-bold">Entregar: </span> <span>01/01/2023</span> <br>
+                                    <span class="fw-bold">Precio Total: </span> <span>$1,000</span>
+                                  </div>
+                                  <div class="col-6">
+                                    <span class="fw-bold">Descripcion: </span> <span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum, ducimus. Voluptatum, ducimus.</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div> 
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <nav aria-label="Page navigation example mt-5">
+                    <ul class="pagination justify-content-center">
+                      <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Previous">
+                          <span aria-hidden="true">&laquo;</span>
+                        </a>
+                      </li>
+                      <li class="page-item"><a class="page-link" href="#">1</a></li>
+                      <li class="page-item"><a class="page-link" href="#">2</a></li>
+                      <li class="page-item"><a class="page-link" href="#">3</a></li>
+                      <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next">
+                          <span aria-hidden="true">&raquo;</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+              </div>
+
+              <!-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TAB: USUARIOS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> -->
+              <div class="tab-pane fade" id="v-pills-usuarios" role="tabpanel" aria-labelledby="v-pills-usuarios-tab" tabindex="1">
+                <!-- ********************** Resultados ********************** -->
+                <div class="d-flex flex-column flex-grow-1">
+                  <!-- ********************** Titulo ********************** -->
+                  <div>
+                    <p class="fs-4 fw-semibold mb-0" style="display: inline-block;">Filtros de Busqueda de Usuarios</p>
+                  </div>
+                  <!-- ********************** Filtros ********************** -->
+                  <table style="width: 100%;">
+                    <tbody>
+                      <tr>
+                        <!-- ********************** Filtro: Nombre del Usuario ********************** -->
+                        <td style="padding-right: 32px;">
+                          <div class="">
+                            <label for="filtroNombreUsuario" class="my-label">Nombre del Usuario</label>
+                            <input type="email" class="form-control form-control-sm my-input" id="filtroNombreUsuario">
+                          </div>
+                        </td>
+                        <!-- ********************** Filtro: Rol ********************** -->
+                        <td>
+                            <label class="my-label d-block">Rol</label>
+                            <div class="btn-group">
+                              <button type="button" class="btn btn-info dropdown-toggle my-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                Seleccionar rol
+                              </button>
+                              <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Todos</a></li>
+                                <li><a class="dropdown-item" href="#">Super Administrador</a></li>
+                                <li><a class="dropdown-item" href="#">Administrador</a></li>
+                                <li><a class="dropdown-item" href="#">Vendedor</a></li>
+                              </ul>
+                            </div>
+                          
+                        </td>
+                      </tr>
+                      <tr>
+                        <!-- ********************** Filtro: Correo ********************** -->
+                        <td style="padding-right: 32px;">
+                          <div class="">
+                            <label for="filtroCorreo" class="my-label">Correo</label>
+                            <input type="text" class="form-control form-control-sm my-input" id="filtroCorreo">
+                          </div>
+                        </td>
+                        
+                        <!-- ********************** Filtro: Estado ********************** -->
+                        <td>
+                          <label class="my-label d-block">Estado</label>
+                          <div class="btn-group">
+                            <button type="button" class="btn btn-info dropdown-toggle my-dropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                              Seleccionar estado
+                            </button>
+                            <ul class="dropdown-menu">
+                              <li><a class="dropdown-item" href="#">Todos</a></li>
+                              <li><a class="dropdown-item" href="#">Activo</a></li>
+                              <li><a class="dropdown-item" href="#">Inactivo</a></li>
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  
+                  <!-- ********************** BUSCAR ********************** -->
+                  <button type="submit" class="btn btn-primary my-button">Buscar</button>
+                  
+                  <!-- ********************** Resultados ********************** -->
+                  <div class="mb-3" style="background-color: #ffffff; padding: 20px; border-radius: 10px; margin-top: 20px; width: 100%; ">
+                    <div class="d-flex flex-column flex-grow-1">
+                      <!-- ||||||||||||||||||| Card ||||||||||||||||||| -->
+                      <div class="card w-100 mb-3">
+                        <div class="card-body container p-2">
+                          <div class="row">
+                            <!-- ############## Icono ############## -->
+                            <div class="col-2">
+                              <div class="container justify-content-center">
+                                <img src="../../public/img/user_icon.png" 
+                                          alt="Logo de la Empresa" 
+                                          height="80"
+                                          class="rounded-circle border border-secondary-subtle mb-2">
+                              </div>
+                            </div>
+                            <!-- ############## Meta Datos ############## -->
+                            <div class="col-10">
+                              <div class="container">
+                                <div class="row">
+                                  <div class="col-12">
+                                    <span class="fw-bold">Nombre: </span> <span>Ernesto Javier Pech Cruz</span> <br>
+                                    <span class="fw-bold">Email: </span> <span>user1@gmail.com</span> <br>
+                                    <span class="fw-bold">Telefono: </span> <span>982 423 4561</span> 
+                                  </div>
+                                </div>
+                              </div>
+                            </div> 
+                          </div>
+                        </div>
+                      </div> <!-- End Card -->
+
+                      <!-- ||||||||||||||||||| Card ||||||||||||||||||| -->
+                      <div class="card w-100 mb-3">
+                        <div class="card-body container p-2">
+                          <div class="row">
+                            <!-- ############## Icono ############## -->
+                            <div class="col-2">
+                              <div class="container justify-content-center">
+                                <img src="../../public/img/user_icon.png" 
+                                          alt="Logo de la Empresa" 
+                                          height="80"
+                                          class="rounded-circle border border-secondary-subtle mb-2">
+                              </div>
+                            </div>
+                            <!-- ############## Meta Datos ############## -->
+                            <div class="col-10">
+                              <div class="container">
+                                <div class="row">
+                                  <div class="col-12">
+                                    <span class="fw-bold">Nombre: </span> <span>Ernesto Javier Pech Cruz</span> <br>
+                                    <span class="fw-bold">Email: </span> <span>user1@gmail.com</span> <br>
+                                    <span class="fw-bold">Telefono: </span> <span>982 423 4561</span> 
+                                  </div>
+                                </div>
+                              </div>
+                            </div> 
+                          </div>
+                        </div>
+                      </div> <!-- End Card -->
+
+                      <!-- ||||||||||||||||||| Card ||||||||||||||||||| -->
+                      <div class="card w-100 mb-3">
+                        <div class="card-body container p-2">
+                          <div class="row">
+                            <!-- ############## Icono ############## -->
+                            <div class="col-2">
+                              <div class="container justify-content-center">
+                                <img src="../../public/img/user_icon.png" 
+                                          alt="Logo de la Empresa" 
+                                          height="80"
+                                          class="rounded-circle border border-secondary-subtle mb-2">
+                              </div>
+                            </div>
+                            <!-- ############## Meta Datos ############## -->
+                            <div class="col-10">
+                              <div class="container">
+                                <div class="row">
+                                  <div class="col-12">
+                                    <span class="fw-bold">Nombre: </span> <span>Ernesto Javier Pech Cruz</span> <br>
+                                    <span class="fw-bold">Email: </span> <span>user1@gmail.com</span> <br>
+                                    <span class="fw-bold">Telefono: </span> <span>982 423 4561</span> 
+                                  </div>
+                                </div>
+                              </div>
+                            </div> 
+                          </div>
+                        </div>
+                      </div> <!-- End Card -->
+
+                      <!-- ||||||||||||||||||| Card ||||||||||||||||||| -->
+                      <div class="card w-100 mb-3">
+                        <div class="card-body container p-2">
+                          <div class="row">
+                            <!-- ############## Icono ############## -->
+                            <div class="col-2">
+                              <div class="container justify-content-center">
+                                <img src="../../public/img/user_icon.png" 
+                                          alt="Logo de la Empresa" 
+                                          height="80"
+                                          class="rounded-circle border border-secondary-subtle mb-2">
+                              </div>
+                            </div>
+                            <!-- ############## Meta Datos ############## -->
+                            <div class="col-10">
+                              <div class="container">
+                                <div class="row">
+                                  <div class="col-12">
+                                    <span class="fw-bold">Nombre: </span> <span>Ernesto Javier Pech Cruz</span> <br>
+                                    <span class="fw-bold">Email: </span> <span>user1@gmail.com</span> <br>
+                                    <span class="fw-bold">Telefono: </span> <span>982 423 4561</span> 
+                                  </div>
+                                </div>
+                              </div>
+                            </div> 
+                          </div>
+                        </div>
+                      </div> <!-- End Card -->
+
+                    </div>
+                  </div>
+
+                  <nav aria-label="Page navigation example mt-5">
+                    <ul class="pagination justify-content-center">
+                      <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Previous">
+                          <span aria-hidden="true">&laquo;</span>
+                        </a>
+                      </li>
+                      <li class="page-item"><a class="page-link" href="#">1</a></li>
+                      <li class="page-item"><a class="page-link" href="#">2</a></li>
+                      <li class="page-item"><a class="page-link" href="#">3</a></li>
+                      <li class="page-item">
+                        <a class="page-link" href="#" aria-label="Next">
+                          <span aria-hidden="true">&raquo;</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <!-- <script src="/static/js/bootstrap.bundle.min.js"></script> -->
+     <script>
+      document.querySelectorAll('.dropdown-menu .dropdown-item').forEach(item => {
+        item.addEventListener('click', function () {
+          // Buscamos el botón dropdown dentro del mismo grupo
+          const btnGroup = this.closest('.btn-group');
+          const dropdownBtn = btnGroup.querySelector('.dropdown-toggle');
+          
+          // Cambiamos el texto del botón por el de la opción seleccionada
+          dropdownBtn.textContent = this.textContent;
+        });
+      });
+
+     </script>
+  </body>
+</html>
