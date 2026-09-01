@@ -4,7 +4,9 @@ package services
 import (
 	"agenda-app/app/internal/errorhandling"
 	"agenda-app/app/internal/models"
+	"agenda-app/app/internal/models/filters"
 	"agenda-app/app/internal/repository"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -13,7 +15,7 @@ import (
 
 type OrderService interface {
 	CreateOrder(requestor models.User, order models.Order)
-	ListOrders(query models.Order) ([]models.Order, error)
+	ListOrders(ctx context.Context, filter filters.GetOrders) ([]models.Order, int64, error)
 	UpdateOrder(requestor models.User, model models.Order) error
 }
 
@@ -33,21 +35,13 @@ func (s *orderService) CreateOrder(requestor models.User, order models.Order) {
 	s.repo.Create(order)
 }
 
-func (s *orderService) ListOrders(query models.Order) ([]models.Order, error) {
-	query = models.Order{
-		AuthorID:     query.AuthorID,
-		ClientName:   query.ClientName,
-		CreatedAt:    query.CreatedAt,
-		DeliveryDate: query.DeliveryDate,
-		Status:       query.Status,
-	}
-
-	result, err := s.repo.ReadByQuery(query)
+func (s *orderService) ListOrders(ctx context.Context, filter filters.GetOrders) ([]models.Order, int64, error) {
+	result, total, err := s.repo.ReadByQuery(filter)
 	if err != nil {
-		return nil, fmt.Errorf("%w: error al listar pedidos: %v", errorhandling.ErrInternal)
+		return nil, 0, fmt.Errorf("%w: error al listar pedidos: %v", errorhandling.ErrInternal, err)
 	}
 
-	return result, nil
+	return result, total, nil
 }
 
 func (s *orderService) UpdateOrder(requestor models.User, model models.Order) error {

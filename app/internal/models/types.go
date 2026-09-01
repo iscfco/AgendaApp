@@ -20,4 +20,11 @@ type OrderStatus string
 const (
 	OrderStatusPending   OrderStatus = "pending"
 	OrderStatusDelivered OrderStatus = "delivered"
+	OrderStatusAll       OrderStatus = "all"
 )
+
+var OrderStatusText map[OrderStatus]string = map[OrderStatus]string{
+	OrderStatusPending:   "Pendiente",
+	OrderStatusDelivered: "Entregado",
+	OrderStatusAll:       "Todos",
+}
