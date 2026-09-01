@@ -1,0 +1,248 @@
+        {{define "control-buttons"}}
+        <!-- Boton para crear nuevo elemento-->
+        <div class="container">
+          <a href="#" class="btn btn-primary rounded-circle shadow-lg position-absolute" style="bottom: 20px; right: 20px; z-index: 1050; width: 60px; height: 60px; padding: 1px;">
+            <i class="fas fa-plus fs-2 fw-bold">+</i>
+          </a>
+        </div>
+        <!-- Boton para ordenar elementos-->
+        <div class="container">
+          <a href="#" class="btn btn-primary rounded-circle shadow-lg position-absolute" style="bottom: 90px; right: 20px; width: 60px; height: 60px; padding: 15px;">
+            <img src="/static/img/sort.svg" 
+                          alt="Logo de la Empresa" 
+                          height="30" 
+                          class="d-block"
+                          style="filter: brightness(0) invert(1);">
+          </a>
+        </div>
+        {{end}}            
+            
+            {{define "content"}}
+            <!-- ======================================= Contenidos ==================================== -->
+            <div class="col-9 vh-100 tab-content p-5 d-flex flex-column overflow-auto" id="v-pills-tabContent" style="background-color: rgb(236 236 236); padding: 2rem;">
+              
+              <!-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> Vista: PEDIDOS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> -->
+              <div class="tab-pane fade show active" id="v-pills-pedidos" role="tabpanel" aria-labelledby="v-pills-pedidos-tab" tabindex="0">
+                <div class="d-flex flex-column flex-grow-1">
+                  
+                  <!-- ********************** Titulo ********************** -->
+                  <div>
+                    <p class="fs-4 fw-semibold mb-0" style="display: inline-block;">Filtros de Busqueda de Pedidos</p>
+                  </div>
+ 
+                  <!-- ********************** Filtros ********************** -->
+                  <div class="container">
+                    <div class="row">
+                      <!-- ********************** Filtro: Nombre del Usuario ********************** -->
+                      <div class="col-md-3">
+                        <label for="userAuthorNameVal" class="my-label">Nombre del Usuario</label>
+                        <input type="text" class="form-control form-control-sm my-input" id="userAuthorNameVal" value="{{.filter_user_creator_name}}">
+                      </div>
+                      
+                      <!-- ********************** Filtro: Palabra Clave ********************** -->
+                      <div class="col-md-6">
+                        <label for="keywordVal" class="my-label">Palabra Clave</label>
+                        <input type="text" class="form-control form-control-sm my-input" id="keywordVal" value="{{.filter_keyword}}">
+                      </div>
+
+                      <!-- ********************** Filtro: Registros por pagina ********************** -->
+                      <div class="col-md-3">
+                          <label for="recordsPerPageVal" class="my-label">Resultados por Pagina</label> <br>
+                          <select id="recordsPerPageVal" >
+                              <option value="50" {{ if eq .limit 50 }}selected{{ end }} >50</option>
+                              <option value="20" {{ if eq .limit 20 }}selected{{ end }} >20</option>
+                              <option value="10" {{ if eq .limit 10 }}selected{{ end }} >10</option>
+                              <option value="01" {{ if eq .limit 01 }}selected{{ end }} >01</option>
+                          </select>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <!-- ********************** Filtro: Nombre del Cliente ********************** -->
+                      <div class="col-md-3">
+                            <label for="clientNameVal" class="my-label">Nombre del Cliente</label>
+                            <input type="text" class="form-control form-control-sm my-input" id="clientNameVal" value="{{.filter_client_name}}">
+                      </div>
+                      
+                      <!-- ********************** Filtro: Fecha de creacion ********************** -->
+                      <div class="col-md-6">
+                          <div class="containerx"> 
+                              <div class="row">
+                                <div class="col-md-12">
+                                    <label for="fromDateVal" class="my-label">Fecha de Creacion</label>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                      <span class="input-group-text bg-light fecha-tag" id="basic-addon-calendar">
+                                        De
+                                      </span>
+                                      <input type="date" 
+                                            class="form-control my-input" 
+                                            id="fromDateVal" 
+                                            name="fecha" 
+                                            aria-describedby="basic-addon-calendar" value="{{.filter_from_date}}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="input-group">
+                                      <span class="input-group-text bg-light fecha-tag" id="basic-addon-calendar">
+                                        A
+                                      </span>
+                                      <input type="date" 
+                                            class="form-control my-input" 
+                                            id="toDateVal" 
+                                            name="fecha" 
+                                            aria-describedby="basic-addon-calendar" value="{{.filter_to_date}}">
+                                    </div>
+                                </div>
+                              </div>
+                          </div>
+                      </div>
+
+                      <!-- ********************** Filtro: Estado ********************** -->
+                      <div class="col-md-3">
+                        <label class="my-label">Estado</label><br>
+                        <div class="btn-group" id="orderStatusButtonGroup">
+                          <button type="button" id="orderStatusButton" class="btn btn-info dropdown-toggle my-dropdown" 
+                          data-bs-toggle="dropdown" aria-expanded="false">
+                            {{if ne .filter_status ""}}
+                              {{.filter_status}}
+                            {{else}}
+                              Seleccionar
+                            {{end}}
+                          </button>
+                          <ul class="dropdown-menu">
+                            <li><a class="dropdown-item order-status-value" href="#">Todos</a></li>
+                            <li><a class="dropdown-item order-status-value" href="#">Pendiente</a></li>
+                            <li><a class="dropdown-item order-status-value" href="#">Entregado</a></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- ********************** BUSCAR ********************** -->
+                  <button type="submit" class="btn btn-primary my-button" id="list-orders-search-button">Buscar</button>
+                  
+                <!-- ********************** Resultados ********************** -->
+                {{if not .show}}
+                  <!-- Primera llamada: Se queda completamente en blanco -->
+                {{else}}
+                  <!-- Llamada usando filtros, se mostrara resultados o mensaje de No hay resultados -->
+                  {{ if not .orders}}
+                        <!-- -------------------------------------------------------------------------------------- -->
+                        <!-- ============================= Caso cuando NO hay resultados ============================= -->
+                        <!-- -------------------------------------------------------------------------------------- -->
+                        <div class="mb-3" style="background-color: #ffffff; padding: 20px; border-radius: 10px; margin-top: 20px; width: 100%; ">
+                          <div class="d-flex flex-column flex-grow-1 justify-content-center">
+                            <p class="fs-4">No se encontraron órdenes para mostrar.</p>
+                          </div>
+                        </div>
+                  {{else}}
+                        <!-- -------------------------------------------------------------------------------------- -->
+                        <!-- ============================= Caso cuando SI hay resultados ============================= -->
+                        <!-- -------------------------------------------------------------------------------------- -->
+                        <!-- Cards container -->
+                          <div class="mb-3" style="background-color: #ffffff; padding: 20px; border-radius: 10px; margin-top: 20px; width: 100%; ">
+                            <div class="d-flex flex-column flex-grow-1">
+                              {{range .orders}}
+                                    <!-- ||||||||||||||||||| Card ||||||||||||||||||| -->
+                                    <div class="card w-100 mb-3 position-relative">
+                                      <div class="card-body container p-2">
+                                        
+                                        <a href="URL_A_DONDE_IR" class="stretched-link text-decoration-none"></a>
+
+                                        <div class="row">
+                                          <!-- ############## Icono y Estado ############## -->
+                                          <div class="col-2">
+                                            <div class="container justify-content-center">
+                                              <img src="/static/img/package.svg" 
+                                                        alt="Logo de la Empresa" 
+                                                        height="80"
+                                                        class="rounded-circle border border-secondary-subtle mb-2">
+                                              {{if eq .Status "pending"}}
+                                                <div class="container justify-content-center" 
+                                                  style=" border-radius: 100px; background: linear-gradient(45deg, rgb(255 53 51), rgb(255 137 74));">
+                                                  <span class="text-dark" style="font-size: 0.8rem; font-weight: 700;">{{ index $.orderStatusText .Status}}</span>
+                                                </div>
+                                              {{else}}
+                                                <div class="container justify-content-center" 
+                                                    style=" border-radius: 100px; background: linear-gradient(45deg, rgb(250 238 33), rgb(95 234 38), rgb(0 255 255));">
+                                                  <span class="text-dark" style="font-size: 0.8rem; font-weight: 700;">{{ index $.orderStatusText .Status}}</span>
+                                                </div>
+                                              {{end}}
+                                            </div>
+                                          </div>
+                                          <!-- ############## Meta Datos ############## -->
+                                          <div class="col-10">
+                                            <div class="container">
+                                              <div class="row">
+                                                <span class="fw-bold fs-5">{{.ClientName}}</span> <br>
+                                                <div class="col-5">
+                                                  <span class="fw-bold">Telefono: </span> <span>{{.ClientPhone}}</span> <br>
+                                                  <span class="fw-bold">Creado: </span> <span>{{ .CreatedAt.Format "02/01/2006 15:04" }}</span> <br>
+                                                  <span class="fw-bold">Entregar: </span> <span>
+                                                        {{ if .DeliveryDate.IsZero }}
+                                                            Por definir
+                                                        {{ else }}
+                                                            {{ .DeliveryDate.Format "02/01/2006" }}
+                                                        {{ end }}
+                                                  </span> <br>
+                                                  <span class="fw-bold">Precio Total: </span> <span>{{.TotalPrice}}</span>
+                                                </div>
+                                                <div class="col-7">
+                                                  <span class="fw-bold">Descripción: </span> <span>{{.Description}}</span> <br>
+                                                  <span class="fw-bold">Autor: </span> <span>{{.Author.UserFullName}}</span>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div> 
+                                        </div>
+                                      </div>
+                                    </div>
+                              {{end}}
+                            </div>
+                          </div>
+
+                          <!-- Pagination -->
+                          <nav id="orders-pagination-nav" data-current="{{ .current_page }}" data-total="{{ .total_pages }}" aria-label="Page navigation example mt-5">
+                              <ul class="pagination justify-content-center">
+                                  <!-- Botón Anterior: Se deshabilita con 'disabled' si estás en la página 1 -->
+                                  <li class="page-item {{ if eq .current_page 1 }}disabled{{ end }}">
+                                      <a class="page-link page-nav-link orders-pagination-link" href="#" data-page="FIRST" aria-label="Previous">
+                                          <span aria-hidden="true">&laquo;</span>
+                                      </a>
+                                  </li>
+
+                                  <!-- Lista de números de páginas -->
+                                  {{ range $page := .pages }}
+                                      <!-- Si $page es igual a la página actual, Bootstrap le aplica la clase 'active' -->
+                                      <li class="page-item {{ if eq $page $.current_page }}active{{ end }}">
+                                          <a class="page-link page-nav-link orders-pagination-link" href="#" data-page="{{ $page }}">{{ $page }}</a>
+                                      </li>
+                                  {{ end }}
+
+                                  <!-- Botón Siguiente: Se deshabilita si estás en la última página -->
+                                  <li class="page-item {{ if eq .current_page .total_pages }}disabled{{ end }}">
+                                      <a class="page-link page-nav-link orders-pagination-link" href="#" data-page="LAST" aria-label="Next">
+                                          <span aria-hidden="true">&raquo;</span>
+                                      </a>
+                                  </li>
+
+                              </ul>
+</nav>
+
+
+
+                  {{end}}
+                {{end}}
+                </div>
+              </div>
+            </div>
+            {{end}}
+
+
+      {{define "scripts"}}
+            <script src="/static/js/list-orders.js"></script>
+      {{end}}

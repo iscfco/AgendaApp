@@ -48,21 +48,24 @@ func main() {
 		logger.Fatal("No se pudo crear el super admin", zap.String("err", err.Error()))
 	}
 
+	// Dependencias
+	// - Repos
+	userRepo := repository.NewUserRepository(db)
+	orderRepo := repository.NewOrderRepository(db)
+
+	// - Services
+	userSvc := services.NewUserService(userRepo)
+	orderSvc := services.NewOrderService(orderRepo)
+
+	// - Controllers
+	order := controllers.NewOrderController(orderSvc)
+	login := controllers.NewLoginController(userSvc)
+
 	// Run API
 	{
-		// Dependencias
-		// - Repos
-		userRepo := repository.NewUserRepository(db)
-
-		// - Services
-		userSvc := services.NewUserService(userRepo)
-
-		// - Controllers
-		home := controllers.NewHomeController()
-		login := controllers.NewLoginController(userSvc)
-
 		// Crear router
 		r := gin.Default()
+
 		r.Use(logs.GinZapMiddleware(logger))
 
 		// Static Files
@@ -81,7 +84,7 @@ func main() {
 
 		// Private router
 		r.Use(middlewares.AuthMiddleware())
-		r.GET("/", home.GetHome)
+		r.GET("/", order.GetOrderView)
 		r.GET("/orders/new", func(c *gin.Context) {
 			tmpl, err := template.New("base").ParseFS(
 				views.ViewsFS,

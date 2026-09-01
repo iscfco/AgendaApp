@@ -3,13 +3,15 @@ import subprocess
 
 from artifacts.run.build import execute_docker_build
 from artifacts.run.run import execute_docker_run
+from artifacts.run.stop import execute_docker_stop, execute_docker_force_stop
 from artifacts.run.metrics import execute_metrics
 
 # List of available commands
 COMMANDS = {
     "build": execute_docker_build,
     "run": execute_docker_run,
-    "stop": 'docker-compose -f .\\artifacts\\docker-compose.yaml down',
+    "stop": execute_docker_stop,
+    "stopf": execute_docker_force_stop,
     "lint": '...',
     "test": '...',
     "metrics": execute_metrics,

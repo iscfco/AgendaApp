@@ -43,8 +43,8 @@ func Run(db *gorm.DB, email, pwd, name string) error {
 		Email:                  email,
 		PasswordHash:           string(passwordHash),
 		RequiresPasswordUpdate: false, // TODO: change for true
-		Role:                   "Super_Admin",
-		Status:                 "Active",
+		Role:                   models.UserRoleSuperAdmin,
+		Status:                 models.UserStatusEnabled,
 	}
 
 	if err := db.Create(&user).Error; err != nil {

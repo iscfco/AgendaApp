@@ -21,13 +21,14 @@
             <!-- ======================================= Contenidos ==================================== -->
             <div class="col-9 vh-100 tab-content p-5 d-flex flex-column overflow-auto" id="v-pills-tabContent" style="background-color: rgb(236 236 236); padding: 2rem;">
               
-              <!-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TAB: PEDIDOS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> -->
+              <!-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> PEDIDOS >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> -->
               <div class="tab-pane fade show active" id="v-pills-pedidos" role="tabpanel" aria-labelledby="v-pills-pedidos-tab" tabindex="0">
                 <div class="d-flex flex-column flex-grow-1">
                   <!-- ********************** Titulo ********************** -->
                   <div>
                     <p class="fs-4 fw-semibold mb-0" style="display: inline-block;">Filtros de Busqueda de Pedidos</p>
                   </div>
+
                   <!-- ********************** Filtros ********************** -->
                   <table style="width: 100%;">
                     <tbody>
@@ -123,7 +124,9 @@
                   <!-- ********************** Resultados ********************** -->
                   <div class="mb-3" style="background-color: #ffffff; padding: 20px; border-radius: 10px; margin-top: 20px; width: 100%; ">
                     <div class="d-flex flex-column flex-grow-1">
-                      
+
+                    {{if .show}}
+                      {{range .orders}}
                       <!-- ||||||||||||||||||| Card ||||||||||||||||||| -->
                       <div class="card w-100 mb-3 position-relative">
                         <div class="card-body container p-2">
@@ -131,7 +134,7 @@
                           <a href="URL_A_DONDE_IR" class="stretched-link text-decoration-none"></a>
 
                           <div class="row">
-                            <!-- ############## Icono ############## -->
+                            <!-- ############## Icono y Estado ############## -->
                             <div class="col-2">
                               <div class="container justify-content-center">
                                 <img src="/static/img/package.svg" 
@@ -139,7 +142,7 @@
                                           height="80"
                                           class="rounded-circle border border-secondary-subtle mb-2">
                                 <div class="container justify-content-center" style=" border-radius: 100px; background: linear-gradient(45deg, rgb(250 238 33), rgb(95 234 38), rgb(0 255 255));">
-                                  <span class="text-dark" style="font-size: 0.8rem; font-weight: 700;">Entregado</span>
+                                  <span class="text-dark" style="font-size: 0.8rem; font-weight: 700;">{{.status}}</span>
                                 </div>
                               </div>
                             </div>
@@ -147,52 +150,15 @@
                             <div class="col-10">
                               <div class="container">
                                 <div class="row">
-                                  <span class="fw-bold fs-5">Ernesto Javier Pech Cruz</span> <br>
+                                  <span class="fw-bold fs-5">{{.client_name}}</span> <br>
                                   <div class="col-6">
-                                    <span class="fw-bold">Telefono: </span> <span>982 423 4561</span> <br>
-                                    <span class="fw-bold">Creado: </span> <span>01/01/2023</span> <br>
-                                    <span class="fw-bold">Entregar: </span> <span>01/01/2023</span> <br>
-                                    <span class="fw-bold">Precio Total: </span> <span>$1,000</span>
+                                    <span class="fw-bold">Telefono: </span> <span>{{.client_phone}}</span> <br>
+                                    <span class="fw-bold">Creado: </span> <span>{{.created_at}}</span> <br>
+                                    <span class="fw-bold">Entregar: </span> <span>{{.due_date}}</span> <br>
+                                    <span class="fw-bold">Precio Total: </span> <span>{{.total_price}}</span>
                                   </div>
                                   <div class="col-6">
-                                    <span class="fw-bold">Descripcion: </span> <span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum, ducimus. Voluptatum, ducimus.</span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div> 
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- ||||||||||||||||||| Card ||||||||||||||||||| -->
-                      <div class="card w-100 mb-3">
-                        <div class="card-body container p-2">
-                          <div class="row">
-                            <!-- ############## Icono ############## -->
-                            <div class="col-2">
-                              <div class="container justify-content-center">
-                                <img src="/static/img/package.svg" 
-                                          alt="Logo de la Empresa" 
-                                          height="80"
-                                          class="rounded-circle border border-secondary-subtle mb-2">
-                                <div class="container justify-content-center" style=" border-radius: 100px; background: linear-gradient(45deg, rgb(255 53 51), rgb(255 137 74));">
-                                  <span class="text-white" style="font-size: 0.8rem; font-weight: 700;">Pendiente</span>
-                                </div>
-                              </div>
-                            </div>
-                            <!-- ############## Meta Datos ############## -->
-                            <div class="col-10">
-                              <div class="container">
-                                <div class="row">
-                                  <span class="fw-bold fs-5">Ernesto Javier Pech Cruz</span> <br>
-                                  <div class="col-6">
-                                    <span class="fw-bold">Telefono: </span> <span>982 423 4561</span> <br>
-                                    <span class="fw-bold">Creado: </span> <span>01/01/2023</span> <br>
-                                    <span class="fw-bold">Entregar: </span> <span>01/01/2023</span> <br>
-                                    <span class="fw-bold">Precio Total: </span> <span>$1,000</span>
-                                  </div>
-                                  <div class="col-6">
-                                    <span class="fw-bold">Descripcion: </span> <span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum, ducimus. Voluptatum, ducimus.</span>
+                                    <span class="fw-bold">Descripcion: </span> <span>{{.description}}</span>
                                   </div>
                                 </div>
                               </div>
@@ -200,83 +166,14 @@
                           </div>
                         </div>
                       </div>
-
-                      <!-- ||||||||||||||||||| Card ||||||||||||||||||| -->
-                      <div class="card w-100 mb-3">
-                        <div class="card-body container p-2">
-                          <div class="row">
-                            <!-- ############## Icono ############## -->
-                            <div class="col-2">
-                              <div class="container justify-content-center">
-                                <img src="/static/img/package.svg" 
-                                          alt="Logo de la Empresa" 
-                                          height="80"
-                                          class="rounded-circle border border-secondary-subtle mb-2">
-                                <div class="container justify-content-center" style=" border-radius: 100px; background: linear-gradient(45deg, rgb(255 53 51), rgb(255 137 74));">
-                                  <span class="text-white" style="font-size: 0.8rem; font-weight: 700;">Pendiente</span>
-                                </div>
-                              </div>
-                            </div>
-                            <!-- ############## Meta Datos ############## -->
-                            <div class="col-10">
-                              <div class="container">
-                                <div class="row">
-                                  <span class="fw-bold fs-5">Ernesto Javier Pech Cruz</span> <br>
-                                  <div class="col-6">
-                                    <span class="fw-bold">Telefono: </span> <span>982 423 4561</span> <br>
-                                    <span class="fw-bold">Creado: </span> <span>01/01/2023</span> <br>
-                                    <span class="fw-bold">Entregar: </span> <span>01/01/2023</span> <br>
-                                    <span class="fw-bold">Precio Total: </span> <span>$1,000</span>
-                                  </div>
-                                  <div class="col-6">
-                                    <span class="fw-bold">Descripcion: </span> <span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum, ducimus. Voluptatum, ducimus.</span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div> 
-                          </div>
+                      {{else}}
+                        <div class="col-12">
+                          <p class="text-muted">No se encontraron órdenes para mostrar.</p>
                         </div>
-                      </div>
-
-                      <!-- ||||||||||||||||||| Card ||||||||||||||||||| -->
-                      <div class="card w-100 mb-3">
-                        <div class="card-body container p-2">
-                          <div class="row">
-                            <!-- ############## Icono ############## -->
-                            <div class="col-2">
-                              <div class="container justify-content-center">
-                                <img src="/static/img/package.svg" 
-                                          alt="Logo de la Empresa" 
-                                          height="80"
-                                          class="rounded-circle border border-secondary-subtle mb-2">
-                                <div class="container justify-content-center" style=" border-radius: 100px; background: linear-gradient(45deg, rgb(255 53 51), rgb(255 137 74));">
-                                  <span class="text-white" style="font-size: 0.8rem; font-weight: 700;">Pendiente</span>
-                                </div>
-                              </div>
-                            </div>
-                            <!-- ############## Meta Datos ############## -->
-                            <div class="col-10">
-                              <div class="container">
-                                <div class="row">
-                                  <span class="fw-bold fs-5" style="color: linear-gradient(45deg, rgb(255 53 51), rgb(255 137 74));">
-                                    Ernesto Javier Pech Cruz
-                                  </span> <br>
-                                  <div class="col-6">
-                                    <span class="fw-bold">Telefono: </span> <span>982 423 4561</span> <br>
-                                    <span class="fw-bold">Creado: </span> <span>01/01/2023</span> <br>
-                                    <span class="fw-bold">Entregar: </span> <span>01/01/2023</span> <br>
-                                    <span class="fw-bold">Precio Total: </span> <span>$1,000</span>
-                                  </div>
-                                  <div class="col-6">
-                                    <span class="fw-bold">Descripcion: </span> <span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum, ducimus. Voluptatum, ducimus.</span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div> 
-                          </div>
-                        </div>
-                      </div>
-
+                      {{end}}
+                    {{else}}
+                      <!-- Primera llamada: Se queda completamente en blanco -->
+                    {{end}}
                     </div>
                   </div>
 

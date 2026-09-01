@@ -29,6 +29,7 @@ CREATE INDEX idx_user_status
 ON "user" (status);
 
 -- +goose Down
+-- ----------------------------------------------------------------------------------------------
 
 DROP INDEX IF EXISTS idx_user_full_name_trgm;
 DROP INDEX IF EXISTS idx_user_role;
