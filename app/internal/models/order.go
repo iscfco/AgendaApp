@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/datatypes"
+)
 
 // Order representa la estructura de un pedido en el sistema
 type Order struct {
@@ -35,7 +39,7 @@ type Order struct {
 	UpdatedAt time.Time `json:"updated_at"`
 
 	// UpdatedBy es el ID del usuario que actualizo el pedido
-	UpdatedBy uint `json:"delivered_by"`
+	UpdatedBy uint `json:"updated_by"`
 
 	// DeliveryDate es la fecha de entrega del pedido
 	DeliveryDate time.Time `json:"delivery_date"`
@@ -47,7 +51,7 @@ type Order struct {
 	Status OrderStatus `json:"status"`
 
 	// ChangeLog es el historial de cambios del pedido
-	ChangeLog string `json:"change_log"`
+	ChangeLog datatypes.JSON `json:"change_log"`
 
 	// StoredInChangeLogAt registra la fecha en la que se almaceno el cambio
 	StoredInChangeLogAt time.Time `json:"stored_in_change_log_at"`

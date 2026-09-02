@@ -11,10 +11,12 @@ import (
 	"errors"
 	"fmt"
 	"time"
+
+	"gorm.io/datatypes"
 )
 
 type OrderService interface {
-	CreateOrder(requestor models.User, order models.Order)
+	CreateOrder(requestor models.User, order models.Order) error
 	ListOrders(ctx context.Context, filter filters.GetOrders) ([]models.Order, int64, error)
 	UpdateOrder(requestor models.User, model models.Order) error
 }
@@ -27,12 +29,23 @@ type orderService struct {
 	repo repository.OrderRepository
 }
 
-func (s *orderService) CreateOrder(requestor models.User, order models.Order) {
-	order.AuthorID = requestor.ID
-	order.CreatedAt = requestor.CreatedAt
-	order.Status = models.OrderStatusPending
-
-	s.repo.Create(order)
+func (s *orderService) CreateOrder(requestor models.User, order models.Order) error {
+	return s.repo.Create(models.Order{
+		AuthorID:      requestor.ID,
+		ClientName:    order.ClientName,
+		ClientPhone:   order.ClientPhone,
+		ClientAddress: order.ClientAddress,
+		TotalPrice:    order.TotalPrice,
+		DownPayment:   order.DownPayment,
+		// CreatedAt:           requestor.CreatedAt, Automatico
+		// UpdatedAt:           requestor.CreatedAt,
+		UpdatedBy:    requestor.ID,
+		DeliveryDate: order.DeliveryDate,
+		Description:  order.Description,
+		Status:       models.OrderStatusPending,
+		//ChangeLog:           datatypes.JSON{},
+		//StoredInChangeLogAt: time.Time{},
+	})
 }
 
 func (s *orderService) ListOrders(ctx context.Context, filter filters.GetOrders) ([]models.Order, int64, error) {
@@ -98,7 +111,7 @@ func (s *orderService) UpdateOrder(requestor models.User, model models.Order) er
 		}
 
 		// Actualizar change log
-		updates.ChangeLog = string(newChangeLog)
+		updates.ChangeLog = datatypes.JSON(newChangeLog)
 	}
 
 	// Actualizar

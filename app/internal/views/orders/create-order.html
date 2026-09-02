@@ -1,0 +1,97 @@
+  {{define "content"}}
+      <!-- ======================================= Contenidos ==================================== -->
+      <div class="col-9 vh-100 tab-content p-5 d-flex flex-column overflow-auto" id="v-pills-tabContent" style="background-color: rgb(236 236 236); padding: 2rem;">
+        
+        <!-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> DETALLES DEL PEDIDO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> -->
+        <div class="tab-pane fade show active" id="v-pills-pedidos" role="tabpanel" aria-labelledby="v-pills-pedidos-tab" tabindex="0">
+          <div class="d-flex flex-column flex-grow-1">
+            <!-- ********************** Titulo ********************** -->
+            <div>
+              <p class="fs-4 fw-semibold mb-0" style="display: inline-block;">Crear Pedido</p>
+            </div>
+            
+            <!-- ********************** Resultados ********************** -->
+            <div class="mb-3" style="background-color: #ffffff; padding: 20px; border-radius: 10px; margin-top: 20px; width: 100%; ">
+              <div class="d-flex flex-column flex-grow-1">
+                
+                <!-- ||||||||||||||||||| FORM ||||||||||||||||||| -->
+                <div class="card w-100 mb-3 position-relative">
+                  <div class="card-body container p-4">
+                    <form class="needs-validation" novalidate id="create-orders-form">
+                        <!-- Nombre del cliente -->
+                        <div class="mb-3">
+                          <label for="createOrder-ClientName" class="form-label">Nombre del cliente</label>
+                          <input type="text" id="createOrder-ClientName" class="form-control" placeholder="Nombre del cliente" required>
+                          <div class="invalid-feedback">Este campo es obligatorio.</div>
+                        </div>
+
+                        <!-- Direccion del cliente -->
+                        <div class="mb-3">
+                          <label for="createOrder-ClientAddress" class="form-label">Direccion del cliente</label>
+                          <input type="text" id="createOrder-ClientAddress" class="form-control" placeholder="Direccion del cliente" required>
+                          <div class="invalid-feedback">Este campo es obligatorio.</div>
+                        </div>
+
+                        <!-- Creador del Pedido -->
+                        <div class="mb-3">
+                          <label for="createOrder-Author" class="form-label">Creado por</label>
+                          <input type="text" id="createOrder-Author" class="form-control" value="{{.author}} ({{.email}})" disabled>
+                          <div class="invalid-feedback">Este campo es obligatorio.</div>
+                        </div>
+
+                        <!-- Fecha para entregar -->
+                        <div class="mb-3">
+                          <label for="createOrder-DueDate" class="form-label">Fecha para entregar</label>
+                          <input type="date" class="form-control my-input" id="createOrder-DueDate" name="fecha" aria-describedby="basic-addon-calendar" required>
+                          <div class="invalid-feedback">Este campo es obligatorio.</div>
+                        </div>
+
+                        <!-- Telefono del cliente -->
+                        <div class="mb-3">
+                          <label for="createOrder-ClientPhone" class="form-label">Telefono del cliente</label>
+                          <input type="number" id="createOrder-ClientPhone" class="form-control" placeholder="Ej: 9821234567" pattern="[0-835619724124409540890-9]+" required>
+                          <div class="invalid-feedback">Este campo es obligatorio y solo acepta numeros</div>
+                        </div>
+
+                        <!-- Costo Total -->
+                        <div class="mb-3">
+                          <label for="createOrder-Total" class="form-label">Costo total</label>
+                          <input type="number" id="createOrder-Total" class="form-control" placeholder="Ej: 300.00" pattern="[0-835619724124409540890-9]+" required>
+                          <div class="invalid-feedback">Este campo es obligatorio y solo acepta numeros</div>
+                        </div>
+
+                        <!-- Anticipo -->
+                        <div class="mb-3">
+                          <label for="createOrder-DownPayment" class="form-label">Anticipo</label>
+                          <input type="number" id="createOrder-DownPayment" class="form-control" placeholder="Ej: 100.00" pattern="[0-835619724124409540890-9]+" required>
+                          <div class="invalid-feedback">Este campo es obligatorio y solo acepta numeros</div>
+                        </div>
+
+                        <!-- Descripcion del pedido -->
+                        <div class="mb-3">
+                          <label for="createOrder-Description" class="form-label">Descripcion del pedido</label>
+                          <textarea id="createOrder-Description" rows="4" class="form-control" placeholder="Descripcion del pedido" required></textarea>
+                          <div class="invalid-feedback">Este campo es obligatorio.</div>
+                        </div>
+
+                        <div class="d-flex justify-content-center">
+                          <button type="submit" class="btn btn-primary" id="create-orders-button">Crear</button>
+                        </div>
+                    </form>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+  {{end}}
+
+  {{define "scripts"}}
+      <script src="/static/js/create-orders.js"></script>
+  {{end}}
+
+  {{define "control-buttons"}}<!-- Empty -->{{end}}
