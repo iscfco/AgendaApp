@@ -25,35 +25,38 @@ func NewOrderController(s services.OrderService) *OrderController {
 
 // Create maneja la petición POST /orders
 func (ctrl *OrderController) Create(c *gin.Context) {
-	// var newOrder models.Order
+	var newOrder models.Order
+	ctx := c.Request.Context()
 
-	// // 1. "Bind" del JSON: Valida que el body traiga los campos del struct
-	// if err := c.ShouldBindJSON(&newOrder); err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": "Datos del pedido inválidos: " + err.Error()})
-	// 	return
-	// }
+	// 1. "Bind" del JSON: Valida que el body traiga los campos del struct
+	if err := c.ShouldBindJSON(&newOrder); err != nil {
+		logs.Logger(ctx).Error("Datos del pedido inválidos", zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Datos del pedido inválidos: " + err.Error()})
+		return
+	}
 
-	// // 2. Obtener el 'Actor' (el usuario que hace la petición)
-	// // Generalmente extraído de un Middleware de Auth previo
-	// actor, exists := c.Get("currentUser")
-	// if !exists {
-	// 	c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuario no identificado"})
-	// 	return
-	// }
+	// 2. Obtener el 'autor' (el usuario que hace la petición)
+	user, err := getUserFromSession(c)
+	if err != nil {
+		logs.Logger(ctx).Error("Error al obtener el actor", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
-	// // 3. Llamar al servicio para aplicar la lógica de negocio
-	// // Pasamos el actor (usuario A) y los datos del nuevo pedido (usuario B/cliente)
-	// err := ctrl.service.CreateOrder(actor.(models.User), newOrder)
-	// if err != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	// 	return
-	// }
+	// 3. Llamar al servicio para aplicar la lógica de negocio
+	// Pasamos el actor (usuario A) y los datos del nuevo pedido (usuario B/cliente)
+	err = ctrl.service.CreateOrder(user, newOrder)
+	if err != nil {
+		logs.Logger(ctx).Error("Error al crear el pedido", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 
 	// // 4. La Vista: Respuesta de éxito
-	// c.JSON(http.StatusCreated, gin.H{
-	// 	"message": "Pedido creado exitosamente",
-	// 	"data":    newOrder,
-	// })
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "Pedido creado exitosamente",
+		"data":    nil,
+	})
 }
 
 // Create maneja la petición GET /
@@ -179,6 +182,45 @@ func (ctrl *OrderController) GetOrderView(c *gin.Context) {
 		"filter_from_date":         filter.From,
 		"filter_to_date":           filter.To,
 		"filter_status":            models.OrderStatusText[models.OrderStatus(filter.Status)],
+	})
+	if err != nil {
+		logs.Logger(ctx).Error("Error renderizando", zap.Error(err))
+		c.String(http.StatusInternalServerError, "Error renderizando")
+	}
+}
+
+func (ctrl *OrderController) GetCreateOrderView(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	// Unimos el html base con el html de la vista
+	tmpl, err := template.New("base").ParseFS( // tempate.New("base") debe se igual al nombre del html base
+		views.ViewsFS,
+		"layout/base.html",         // Archivo base con {{template "control-buttons" .}} y {{template "content" .}}
+		"orders/create-order.html", // El archivo que define {{define "control-buttons"}} y {{define "content"}}
+	)
+	if err != nil {
+		logs.Logger(ctx).Error("Error cargando plantillas", zap.Error(err))
+		c.String(http.StatusInternalServerError, "Error cargando plantillas")
+		return
+	}
+
+	// Get User
+	user, err := getUserFromSession(c)
+	if err != nil {
+		logs.Logger(ctx).Error("No se pudo obtener el usuario", zap.Error(err))
+		c.String(http.StatusInternalServerError, "No se pudo obtener la sesion del usuario")
+		return
+	}
+
+	// Ejecutamos directamente con .Execute porque el template ya sabe que su nodo principal es "base"
+	err = tmpl.Execute(c.Writer, gin.H{
+		"title": "Agenda App - Crear Pedidos",
+		// Datos del usuario
+		"fullname": user.UserFullName,
+		"email":    user.Email,
+		"role":     user.Role,
+		// Datos inyectados al form de crear orden
+		"author": user.UserFullName,
 	})
 	if err != nil {
 		logs.Logger(ctx).Error("Error renderizando", zap.Error(err))

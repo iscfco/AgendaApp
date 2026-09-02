@@ -24,7 +24,7 @@ func NewOrderRepository(db *gorm.DB) OrderRepository {
 type orderRepo struct{ db *gorm.DB }
 
 func (r *orderRepo) Create(o models.Order) error {
-	return r.db.Create(o).Error
+	return r.db.Create(&o).Error
 }
 
 func (r *orderRepo) ReadByQuery(filters filters.GetOrders) ([]models.Order, int64, error) {

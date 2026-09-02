@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"html/template"
 	"io/fs"
 	"net/http"
 
@@ -85,25 +84,8 @@ func main() {
 		// Private router
 		r.Use(middlewares.AuthMiddleware())
 		r.GET("/", order.GetOrderView)
-		r.GET("/orders/new", func(c *gin.Context) {
-			tmpl, err := template.New("base").ParseFS(
-				views.ViewsFS,
-				"layout/base.html",
-				"orders/create.html",
-			)
-			if err != nil {
-				c.String(http.StatusInternalServerError, "Error cargando plantillas: %v", err)
-				return
-			}
-
-			// Ejecutamos el template apuntando a "base"
-			err = tmpl.Execute(c.Writer, gin.H{
-				"title": "Registro de Órdenes",
-			})
-			if err != nil {
-				c.String(http.StatusInternalServerError, "Error renderizando: %v", err)
-			}
-		})
+		r.GET("/order/new", order.GetCreateOrderView)
+		r.POST("/order", order.Create)
 
 		r.Run(":8080")
 	}
