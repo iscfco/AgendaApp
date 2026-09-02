@@ -54,10 +54,10 @@ func main() {
 
 	// - Services
 	userSvc := services.NewUserService(userRepo)
-	orderSvc := services.NewOrderService(orderRepo)
+	orderSvc := services.NewOrderService(orderRepo, userRepo)
 
 	// - Controllers
-	order := controllers.NewOrderController(orderSvc)
+	order := controllers.NewOrderController(orderSvc, userSvc)
 	login := controllers.NewLoginController(userSvc)
 
 	// Run API
@@ -84,8 +84,11 @@ func main() {
 		// Private router
 		r.Use(middlewares.AuthMiddleware())
 		r.GET("/", order.GetOrderView)
-		r.GET("/order/new", order.GetCreateOrderView)
+		r.GET("/order/view", order.GetCreateOrderView)
 		r.POST("/order", order.Create)
+		r.GET("/order/:id/view", order.GetOrderDetailsView)
+		r.PUT("/order/:id", order.Update)
+		r.DELETE("/order/:id", order.Delete)
 
 		r.Run(":8080")
 	}

@@ -19,14 +19,21 @@ type OrderService interface {
 	CreateOrder(requestor models.User, order models.Order) error
 	ListOrders(ctx context.Context, filter filters.GetOrders) ([]models.Order, int64, error)
 	UpdateOrder(requestor models.User, model models.Order) error
+	GetOrderById(id uint) (models.Order, error)
+	DeleteOrder(id uint) error
 }
 
-func NewOrderService(r repository.OrderRepository) OrderService {
-	return &orderService{repo: r}
+func NewOrderService(r repository.OrderRepository, userRepo repository.UserRepository) OrderService {
+	return &orderService{repo: r, userRepo: userRepo}
 }
 
 type orderService struct {
-	repo repository.OrderRepository
+	repo     repository.OrderRepository
+	userRepo repository.UserRepository
+}
+
+func (s *orderService) GetOrderById(id uint) (models.Order, error) {
+	return s.repo.ReadByID(id)
 }
 
 func (s *orderService) CreateOrder(requestor models.User, order models.Order) error {
@@ -37,14 +44,10 @@ func (s *orderService) CreateOrder(requestor models.User, order models.Order) er
 		ClientAddress: order.ClientAddress,
 		TotalPrice:    order.TotalPrice,
 		DownPayment:   order.DownPayment,
-		// CreatedAt:           requestor.CreatedAt, Automatico
-		// UpdatedAt:           requestor.CreatedAt,
-		UpdatedBy:    requestor.ID,
-		DeliveryDate: order.DeliveryDate,
-		Description:  order.Description,
-		Status:       models.OrderStatusPending,
-		//ChangeLog:           datatypes.JSON{},
-		//StoredInChangeLogAt: time.Time{},
+		UpdatedBy:     requestor.ID,
+		DeliveryDate:  order.DeliveryDate,
+		Description:   order.Description,
+		Status:        models.OrderStatusPending,
 	})
 }
 
@@ -69,6 +72,7 @@ func (s *orderService) UpdateOrder(requestor models.User, model models.Order) er
 
 	// Preparar updates
 	updates := models.Order{
+		ID:            model.ID,
 		ClientName:    model.ClientName,
 		ClientPhone:   model.ClientPhone,
 		ClientAddress: model.ClientAddress,
@@ -81,31 +85,41 @@ func (s *orderService) UpdateOrder(requestor models.User, model models.Order) er
 		UpdatedBy:     requestor.ID,
 	}
 
-	// Definir delivery date
-	{
-		if model.Status == models.OrderStatusDelivered {
-			updates.DeliveryDate = time.Now()
-		}
-		if model.Status == models.OrderStatusPending {
-			updates.DeliveryDate = time.Time{}
-		}
-	}
-
 	// - Preparar change log
 	{
+		if orderInDB.ChangeLog == nil {
+			orderInDB.ChangeLog = datatypes.JSON("[]")
+		}
+
 		// Convertir string a arreglo de orders
-		currentChangeLog := []models.Order{}
+		currentChangeLog := []map[string]interface{}{}
 		err = json.Unmarshal([]byte(orderInDB.ChangeLog), &currentChangeLog)
 		if err != nil {
 			return fmt.Errorf("%w: error al deserializar change log: %v", errorhandling.ErrInternal, err)
 		}
 
 		// Agregar order al arreglo
-		orderInDB.StoredInChangeLogAt = time.Now()
-		currentChangeLog = append(currentChangeLog, orderInDB)
+		newRecord := map[string]interface{}{}
+		err = json.Unmarshal(orderInDB.ToJson(), &newRecord)
+		if err != nil {
+			return fmt.Errorf("%w: error covertir orden en json: %v", errorhandling.ErrInternal, err)
+		}
+		// Remove irrelevant data
+		delete(newRecord, "change_log")
+		delete(newRecord, "id")
+		delete(newRecord, "author_id")
+		delete(newRecord, "created_at")
+
+		// Add updater name
+		author, err := s.userRepo.ReadByID(orderInDB.UpdatedBy)
+		if err != nil {
+			return fmt.Errorf("%w: error al obtener autor: %v", errorhandling.ErrInternal, err)
+		}
+		newRecord["updated_by_name"] = fmt.Sprintf("%s (%s)", author.UserFullName, author.Email)
+		currentChangeLog = append(currentChangeLog, newRecord)
 
 		// Convertir de nuevo a string
-		newChangeLog, err := json.Marshal(currentChangeLog)
+		newChangeLog, err := json.MarshalIndent(currentChangeLog, "", "  ")
 		if err != nil {
 			return fmt.Errorf("%w: error al serializar change log: %v", errorhandling.ErrInternal, err)
 		}
@@ -116,4 +130,8 @@ func (s *orderService) UpdateOrder(requestor models.User, model models.Order) er
 
 	// Actualizar
 	return s.repo.Update(updates)
+}
+
+func (s *orderService) DeleteOrder(id uint) error {
+	return s.repo.Delete(id)
 }

@@ -65,7 +65,7 @@ func (r *orderRepo) ReadByQuery(filters filters.GetOrders) ([]models.Order, int6
 
 	// 5. Aplicamos Paginación (LIMIT y OFFSET) y traemos los datos reales
 	offset := (filters.Page - 1) * filters.Limit
-	err := query.Limit(filters.Limit).Offset(offset).Find(&orders).Error
+	err := query.Limit(filters.Limit).Offset(offset).Order("\"order\".created_at DESC").Find(&orders).Error
 	return orders, totalRecords, err
 }
 
@@ -80,7 +80,7 @@ func (r *orderRepo) ReadByID(id uint) (models.Order, error) {
 }
 
 func (r *orderRepo) Update(order models.Order) error {
-	return r.db.Save(&order).Error
+	return r.db.Debug().Updates(&order).Error
 }
 
 func (r *orderRepo) Delete(id uint) error {

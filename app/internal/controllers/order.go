@@ -8,8 +8,13 @@ import (
 	"agenda-app/app/internal/utils/logs"
 	"agenda-app/app/internal/utils/sessions"
 	"agenda-app/app/internal/views"
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"html/template"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -17,13 +22,14 @@ import (
 
 type OrderController struct {
 	service services.OrderService
+	userSvc services.UserService
 }
 
-func NewOrderController(s services.OrderService) *OrderController {
-	return &OrderController{service: s}
+func NewOrderController(s services.OrderService, userSvc services.UserService) *OrderController {
+	return &OrderController{userSvc: userSvc, service: s}
 }
 
-// Create maneja la petición POST /orders
+// Create maneja la petición POST /order
 func (ctrl *OrderController) Create(c *gin.Context) {
 	var newOrder models.Order
 	ctx := c.Request.Context()
@@ -226,4 +232,173 @@ func (ctrl *OrderController) GetCreateOrderView(c *gin.Context) {
 		logs.Logger(ctx).Error("Error renderizando", zap.Error(err))
 		c.String(http.StatusInternalServerError, "Error renderizando")
 	}
+}
+
+func (ctrl *OrderController) GetOrderDetailsView(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	// Unimos el html base con el html de la vista
+	tmpl, err := template.New("base").ParseFS(
+		views.ViewsFS,
+		"layout/base.html",
+		"orders/order-details.html",
+	)
+	if err != nil {
+		logs.Logger(ctx).Error("Error cargando plantillas", zap.Error(err))
+		c.String(http.StatusInternalServerError, "Error cargando plantillas")
+		return
+	}
+
+	// Get User
+	user, err := getUserFromSession(c)
+	if err != nil {
+		logs.Logger(ctx).Error("No se pudo obtener el usuario", zap.Error(err))
+		c.String(http.StatusInternalServerError, "No se pudo obtener la sesion del usuario")
+		return
+	}
+
+	// Get order
+	id := c.Param("id")
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		logs.Logger(ctx).Error("No se pudo obtener el id de la orden", zap.Error(err))
+		c.String(http.StatusInternalServerError, "No se pudo obtener el id de la orden")
+		return
+	}
+
+	order, err := ctrl.service.GetOrderById(uint(idInt))
+	if err != nil {
+		logs.Logger(ctx).Error("No se pudo obtener la orden", zap.Error(err))
+		c.String(http.StatusInternalServerError, "No se pudo obtener la orden")
+		return
+	}
+
+	// Get the name of author
+	author, err := ctrl.userSvc.GetUserById(order.AuthorID)
+	if err != nil {
+		logs.Logger(ctx).Error("No se pudo obtener el usuario que modifico la orden", zap.Error(err))
+		c.String(http.StatusInternalServerError, "No se pudo obtener el usuario que modifico la orden")
+		return
+	}
+
+	// Get the name of the last user who updated the order
+	lastUpdater, err := ctrl.userSvc.GetUserById(order.UpdatedBy)
+	if err != nil {
+		logs.Logger(ctx).Error("No se pudo obtener el usuario que modifico la orden", zap.Error(err))
+		c.String(http.StatusInternalServerError, "No se pudo obtener el usuario que modifico la orden")
+		return
+	}
+
+	var buffer bytes.Buffer
+	json.Indent(&buffer, []byte(order.ChangeLog), "", "    ")
+	indentedJSON := buffer.String()
+
+	// Ejecutamos directamente con .Execute porque el template ya sabe que su nodo principal es "base"
+	err = tmpl.Execute(c.Writer, gin.H{
+		"title": "Agenda App - Crear Pedidos",
+		// Datos del usuario
+		"fullname": user.UserFullName,
+		"email":    user.Email,
+		"role":     user.Role,
+
+		// Datos de la orden
+		"order_id":          idInt,
+		"status":            models.OrderStatusText[order.Status],
+		"created_at":        order.CreatedAt.Format(time.DateTime),
+		"author":            fmt.Sprintf("%s (%s)", author.UserFullName, author.Email),
+		"client_name":       order.ClientName,
+		"client_phone":      order.ClientPhone,
+		"client_address":    order.ClientAddress,
+		"total_price":       order.TotalPrice,
+		"down_payment":      order.DownPayment,
+		"remaining_balance": order.TotalPrice - order.DownPayment,
+		"delivery_date":     order.DeliveryDate.Format(time.DateOnly),
+		"description":       order.Description,
+		"updated_at":        order.UpdatedAt.Format(time.DateTime),
+		"updated_by":        fmt.Sprintf("%s (%s)", lastUpdater.UserFullName, lastUpdater.Email),
+		"change_log":        indentedJSON,
+	})
+	if err != nil {
+		logs.Logger(ctx).Error("Error renderizando", zap.Error(err))
+		c.String(http.StatusInternalServerError, "Error renderizando")
+	}
+}
+
+// Create maneja la petición POST /order/:id
+func (ctrl *OrderController) Update(c *gin.Context) {
+	var newOrder models.Order
+	ctx := c.Request.Context()
+
+	orderID := c.Param("id")
+	orderIDInt, err := strconv.Atoi(orderID)
+	if err != nil {
+		logs.Logger(ctx).Error("ID del pedido inválido", zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID del pedido inválido: " + err.Error()})
+		return
+	}
+
+	// 1. "Bind" del JSON: Valida que el body traiga los campos del struct
+	if err := c.ShouldBindJSON(&newOrder); err != nil {
+		logs.Logger(ctx).Error("Datos del pedido inválidos", zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Datos del pedido inválidos: " + err.Error()})
+		return
+	}
+
+	// 2. Obtener el 'autor' (el usuario que hace la petición)
+	user, err := getUserFromSession(c)
+	if err != nil {
+		logs.Logger(ctx).Error("Error al obtener el actor", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// 3. Llamar al servicio para aplicar la lógica de negocio
+	newOrder.ID = uint(orderIDInt)
+	err = ctrl.service.UpdateOrder(user, newOrder)
+	if err != nil {
+		logs.Logger(ctx).Error("Error al crear el pedido", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// // 4. La Vista: Respuesta de éxito
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "Pedido actualizado exitosamente",
+	})
+}
+
+func (ctrl *OrderController) Delete(c *gin.Context) {
+	ctx := c.Request.Context()
+	orderID := c.Param("id")
+	orderIDInt, err := strconv.Atoi(orderID)
+	if err != nil {
+		logs.Logger(ctx).Error("ID del pedido inválido", zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID del pedido inválido: " + err.Error()})
+		return
+	}
+
+	user, err := getUserFromSession(c)
+	if err != nil {
+		logs.Logger(ctx).Error("Error al obtener el actor", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	if user.Role != "admin" && user.Role != "superadmin" {
+		logs.Logger(ctx).Error("El usuario no es admin o superadmin")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "El usuario no tiene privilegioss suficientes"})
+		return
+	}
+
+	err = ctrl.service.DeleteOrder(uint(orderIDInt))
+	if err != nil {
+		logs.Logger(ctx).Error("Error al crear el pedido", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	// // 4. La Vista: Respuesta de éxito
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "Pedido actualizado exitosamente",
+	})
 }

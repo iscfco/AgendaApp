@@ -19,6 +19,7 @@ type UserService interface {
 	ListUsers(requestor, query models.User) ([]models.User, error)
 	UpdateUser(requestor, model models.User) error
 	GetUserByEmail(email string) (models.User, error)
+	GetUserById(id uint) (models.User, error)
 }
 
 func NewUserService(r repository.UserRepository) UserService {
@@ -45,6 +46,10 @@ func CheckRole(requestorRole, userRole models.UserRole) error {
 	default:
 		return fmt.Errorf("%w: rol '%s' no reconocido", errorhandling.ErrInternal, requestorRole)
 	}
+}
+
+func (s *userService) GetUserById(id uint) (models.User, error) {
+	return s.repo.ReadByID(id)
 }
 
 func (s *userService) RegisterNewUser(requestor, newUser models.User) (string, error) {
