@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"time"
 
 	"gorm.io/datatypes"
@@ -9,13 +10,13 @@ import (
 // Order representa la estructura de un pedido en el sistema
 type Order struct {
 	// Author es el usuario que creo el pedido
-	Author User `gorm:"foreignKey:AuthorID" json:"author"`
+	Author User `gorm:"foreignKey:AuthorID" json:"-"`
 
 	// ID es el identificador del pedido
 	ID uint `gorm:"primaryKey" json:"id"`
 
 	// Autor es el usuario que creo el pedido
-	AuthorID uint `gorm:"primaryKey" json:"author_id"`
+	AuthorID uint `gorm:"not null;foreignKey" json:"author_id"`
 
 	// ClienteName es el nombre completo del cliente
 	ClientName string `gorm:"not null" json:"client_name"`
@@ -52,11 +53,16 @@ type Order struct {
 
 	// ChangeLog es el historial de cambios del pedido
 	ChangeLog datatypes.JSON `json:"change_log"`
-
-	// StoredInChangeLogAt registra la fecha en la que se almaceno el cambio
-	StoredInChangeLogAt time.Time `json:"stored_in_change_log_at"`
 }
 
 func (Order) TableName() string {
 	return "order"
+}
+
+func (o *Order) ToJson() []byte {
+	bytes, err := json.Marshal(o)
+	if err != nil {
+		return []byte("")
+	}
+	return bytes
 }

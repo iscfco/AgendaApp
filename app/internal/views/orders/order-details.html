@@ -1,0 +1,148 @@
+  {{define "content"}}
+
+            <!-- ======================================= Contenidos ==================================== -->
+            <div class="col-9 vh-100 tab-content p-5 d-flex flex-column overflow-auto" id="v-pills-tabContent" style="background-color: rgb(236 236 236); padding: 2rem;">
+              
+              <!-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> DETALLES DEL PEDIDO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> -->
+              <div class="tab-pane fade show active" id="v-pills-pedidos" role="tabpanel" aria-labelledby="v-pills-pedidos-tab" tabindex="0">
+                <div class="d-flex flex-column flex-grow-1">
+                  <!-- ********************** Titulo ********************** -->
+                  <div>
+                    <p class="fs-4 fw-semibold mb-0" style="display: inline-block;">Detalles del Pedido - ID [{{.order_id}}]</p>
+                  </div>
+                  
+                  <!-- ********************** Resultados ********************** -->
+                  <div class="mb-3" style="background-color: #ffffff; padding: 20px; border-radius: 10px; margin-top: 20px; width: 100%; ">
+                    <div class="d-flex flex-column flex-grow-1">
+                      
+                      <!-- ||||||||||||||||||| FORM ||||||||||||||||||| -->
+                      <div class="card w-100 mb-3 position-relative">
+                        <div class="card-body container p-4">
+                          <form id="update-order-form" class="needs-validation" novalidate>
+                              <input type="hidden" name="order_id" id="orderDetails-ID" value="{{.order_id}}">
+
+                              <!-- Estado -->
+                              <div class="mb-3">
+                                <label for="orderDetails-Status" class="form-label">Estado</label>
+                                <select id="orderDetails-Status" name="status" class="form-select" aria-label="Default select example">
+                                  <option value="pending"   {{ if eq .status "Pendiente" }}selected{{ end }}>Pendiente</option>
+                                  <option value="delivered" {{ if eq .status "Entregado" }}selected{{ end }}>Entregado</option>
+                                </select>
+                              </div>
+
+                              <!-- Creado El -->
+                              <div class="mb-3">
+                                <label for="orderDetails-CreatedAt" class="form-label">Creado el</label>
+                                <input type="text" id="orderDetails-CreatedAt" class="form-control" value="{{.created_at}}" disabled>
+                              </div>
+
+                              <!-- Creador del Pedido -->
+                              <div class="mb-3">
+                                <label for="orderDetails-CreatedBy" class="form-label">Creado por</label>
+                                <input type="text" id="orderDetails-CreatedBy" class="form-control" disabled value="{{.author}}">
+                              </div>
+                              
+                              <!-- Nombre del cliente -->
+                              <div class="mb-3">
+                                <label for="orderDetails-ClientName" class="form-label">Nombre del cliente</label>
+                                <input type="text" id="orderDetails-ClientName" class="form-control" 
+                                    placeholder="Nombre del cliente" value="{{.client_name}}" required>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                              </div>
+
+                              <!-- Telefono del cliente -->
+                              <div class="mb-3">
+                                <label for="orderDetails-ClientPhone" class="form-label">Telefono del cliente</label>
+                                <input type="number" id="orderDetails-ClientPhone" class="form-control" placeholder="Ej: 9821234567" 
+                                    pattern="[0-835619724124409540890-9]+" value="{{.client_phone}}" required>
+                                <div class="invalid-feedback">Este campo es obligatorio y solo acepta numeros</div>
+                              </div>
+
+                              <!-- Direccion del cliente -->
+                              <div class="mb-3">
+                                <label for="orderDetails-ClientAddress" class="form-label">Direccion del cliente</label>
+                                <input type="text" id="orderDetails-ClientAddress" class="form-control" 
+                                    placeholder="Direccion del cliente" value="{{.client_address}}" required>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                              </div>
+
+                              <!-- Costo Total -->
+                              <div class="mb-3">
+                                <label for="orderDetails-Total" class="form-label">Costo total</label>
+                                <input type="number" id="orderDetails-Total" class="form-control" placeholder="Ej: 300.00" 
+                                    pattern="[0-835619724124409540890-9]+" value="{{.total_price}}" required>
+                                <div class="invalid-feedback">Este campo es obligatorio y solo acepta numeros</div>
+                              </div>
+
+                              <!-- Abono -->
+                              <div class="mb-3">
+                                <label for="orderDetails-DownPayment" class="form-label">Total Abonado</label>
+                                <input type="number" id="orderDetails-DownPayment" class="form-control" placeholder="Ej: 100.00" 
+                                    pattern="[0-835619724124409540890-9]+" value="{{.down_payment}}" required>
+                                <div class="invalid-feedback">Este campo es obligatorio y solo acepta numeros</div>
+                              </div>
+
+                              <!-- Monto restante -->
+                              <div class="mb-3">
+                                <label for="input_MontoRestante" class="form-label">Monto restante (solo informativo, no se guarda en la base de datos)</label>
+                                <input type="text" id="input_MontoRestante" class="form-control" placeholder="Ej: 200.00" value="{{.remaining_balance}}" disabled>
+                              </div>
+
+                              <!-- Fecha para entregar -->
+                              <div class="mb-3">
+                                <label for="orderDetails-DueDate" class="form-label">Fecha para entregar</label>
+                                <input type="date" id="orderDetails-DueDate" class="form-control" name="fecha" 
+                                    aria-describedby="basic-addon-calendar" value="{{.delivery_date}}" required>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                              </div>
+
+                              <!-- Descripcion del pedido -->
+                              <div class="mb-3">
+                                <label for="orderDetails-Description" class="form-label">Descripcion del pedido</label>
+                                <textarea id="orderDetails-Description" rows="4" class="form-control" 
+                                    placeholder="Descripcion del pedido" required>{{.description}}</textarea>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                              </div>
+
+                              <!-- Fecha de la ultima actualizacion -->
+                              <div class="mb-3">
+                                <label for="input_FechaEnQueSeEntrego" class="form-label">Fecha de la ultima actualizacion</label>
+                                <input type="text" id="input_FechaEnQueSeEntrego" class="form-control" disabled value="{{.updated_at}}">
+                              </div>
+
+                              <!-- Usuaio que actualizo -->
+                              <div class="mb-3">
+                                <label for="input_EntregadoPor" class="form-label">Ultimo usuario que actualizo</label>
+                                <input type="text" id="input_EntregadoPor" class="form-control" disabled value="{{.updated_by}}">
+                              </div>
+
+                              <!-- Historial de Cambios -->
+                              <div class="mb-3">
+                                <label for="input_Descripcion" class="form-label">Historial de cambios</label>
+                                <textarea id="input_Descripcion" rows="10" class="form-control" disabled>{{.change_log}}</textarea>
+                              </div>
+
+                              <div class="d-flex justify-content-center">
+                                <button type="submit" class="btn btn-primary me-3" id="orders-details-save-button">Guardar</button>
+                                <button type="button" class="btn btn-danger" data-id="{{.order_id}}" onclick="removeOrder(this)">Eliminar</button>
+                              </div>
+
+                          </form>
+
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+  {{end}}
+
+
+  {{define "scripts"}}
+      <script src="/static/js/orders-details.js"></script>
+  {{end}}
+
+  {{define "control-buttons"}}<!-- Empty -->{{end}}

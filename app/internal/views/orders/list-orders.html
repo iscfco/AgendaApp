@@ -1,7 +1,7 @@
         {{define "control-buttons"}}
         <!-- Boton para crear nuevo elemento-->
         <div class="container">
-          <a href="/order/new" class="btn btn-primary rounded-circle shadow-lg position-absolute" style="bottom: 20px; right: 20px; z-index: 1050; width: 60px; height: 60px; padding: 1px;">
+          <a href="/order/view" class="btn btn-primary rounded-circle shadow-lg position-absolute" style="bottom: 20px; right: 20px; z-index: 1050; width: 60px; height: 60px; padding: 1px;">
             <i class="fas fa-plus fs-2 fw-bold">+</i>
           </a>
         </div>
@@ -148,10 +148,10 @@
                             <div class="d-flex flex-column flex-grow-1">
                               {{range .orders}}
                                     <!-- ||||||||||||||||||| Card ||||||||||||||||||| -->
-                                    <div class="card w-100 mb-3 position-relative">
+                                    <div class="card w-100 mb-3 position-relative" id="order-card-{{.ID}}">
                                       <div class="card-body container p-2">
                                         
-                                        <a href="URL_A_DONDE_IR" class="stretched-link text-decoration-none"></a>
+                                        <a href="/order/{{.ID}}/view" class="stretched-link text-decoration-none"></a>
 
                                         <div class="row">
                                           <!-- ############## Icono y Estado ############## -->
@@ -193,7 +193,7 @@
                                                 </div>
                                                 <div class="col-7">
                                                   <span class="fw-bold">Descripción: </span> <span>{{.Description}}</span> <br>
-                                                  <span class="fw-bold">Autor: </span> <span>{{.Author.UserFullName}}</span>
+                                                  <span class="fw-bold">Autor: </span> <span>{{.Author.UserFullName}}</span> <br>
                                                 </div>
                                               </div>
                                             </div>

@@ -58,7 +58,6 @@ function getStatusValue(key) {
 document.addEventListener("DOMContentLoaded", () => {
     const nav = document.getElementById("orders-pagination-nav");
     // Leemos los atributos directamente del HTML real renderizado por Go
-    const currentPage = parseInt(nav.dataset.current) || 1;
     const totalPages = parseInt(nav.dataset.total) || 1;
 
 
@@ -95,7 +94,3 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
-
-
-
-     
