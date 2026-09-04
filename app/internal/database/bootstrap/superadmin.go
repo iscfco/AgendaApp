@@ -22,7 +22,7 @@ func Run(db *gorm.DB, email, pwd, name string) error {
 	var user models.User
 
 	err := db.
-		Where("email = ?", email).
+		Where("role = ?", models.UserRoleSuperAdmin).
 		First(&user).Error
 
 	if err == nil {
@@ -42,7 +42,7 @@ func Run(db *gorm.DB, email, pwd, name string) error {
 		UserFullName:           name,
 		Email:                  email,
 		PasswordHash:           string(passwordHash),
-		RequiresPasswordUpdate: false, // TODO: change for true
+		RequiresPasswordUpdate: false,
 		Role:                   models.UserRoleSuperAdmin,
 		Status:                 models.UserStatusEnabled,
 	}

@@ -91,10 +91,10 @@ func (s *BackupScheduler) runLoop() {
 	}
 }
 
-func BackupLocalMiddleware(cfg config.DB, backupDir string) gin.HandlerFunc {
-	dbConnStr = fmt.Sprintf(PostgresConnString, cfg.User, cfg.Pass, cfg.Host, cfg.Port, cfg.DBName)
-	backupDirectory = backupDir
-	maxBackups = 10
+func BackupLocalMiddleware(cfg *config.Config) gin.HandlerFunc {
+	dbConnStr = fmt.Sprintf(PostgresConnString, cfg.DB.User, cfg.DB.Pass, cfg.DB.Host, cfg.DB.Port, cfg.DB.DBName)
+	backupDirectory = cfg.Backup.Directory
+	maxBackups = cfg.Backup.MaxRetention
 
 	if err := os.MkdirAll(backupDirectory, 0755); err != nil {
 		log.Fatalf("[backup] Error crítico al crear el directorio de respaldos: %v", err)
@@ -181,7 +181,7 @@ func cleanOldBackups() error {
 		return backupFiles[i].ModTime().After(backupFiles[j].ModTime())
 	})
 
-	// Los elementos desde el índice MaxBackupRetention (10) en adelante son los antiguos y deben borrarse
+	// Los elementos desde el índice MaxBackupRetention en adelante son los antiguos y deben borrarse
 	for i := maxBackups; i < len(backupFiles); i++ {
 		oldFilePath := filepath.Join(backupDirectory, backupFiles[i].Name())
 		log.Printf("[Backup Retention] Eliminando respaldo obsoleto: %s", backupFiles[i].Name())
