@@ -163,7 +163,9 @@ func (ctrl *OrderController) GetOrderView(c *gin.Context) {
 
 	// Ejecutamos directamente con .Execute porque el template ya sabe que su nodo principal es "base"
 	err = tmpl.Execute(c.Writer, gin.H{
-		"title": "Agenda App - Pedidos",
+		"title":       "Agenda App - Pedidos",
+		"orderActive": true,
+
 		// Datos del usuario
 		"fullname": user.UserFullName,
 		"email":    user.Email,

@@ -45,15 +45,18 @@
               </div>
 
               <!-- Botones de navegación -->
-              <button class="nav-link active" id="v-pills-pedidos-tab" type="button" role="tab" aria-controls="v-pills-pedidos" aria-selected="true">
+              <button class="nav-link {{ if .orderActive }}active{{ end }}" id="v-menu-pedidos-tab" type="button">
                 Pedidos
               </button>
-              <button class="nav-link" id="v-pills-usuarios-tab" data-bs-toggle="pill" data-bs-target="#v-pills-usuarios" type="button" role="tab" aria-controls="v-pills-usuarios" aria-selected="false">
+              {{if eq .role "superadmin" "admin"}}
+              <button class="nav-link {{ if .userActive }}active{{ end }}" id="v-menu-usuarios-tab"  type="button">
                 Usuarios
               </button>
-              <button class="nav-link mt-auto" id="v-logout-tab" type="button" role="tab" aria-controls="v-pills-usuarios" aria-selected="false">
+              {{end}}
+              <button class="nav-link mt-auto" id="v-menu-logout" type="button">
                   Cerrar Sesion
               </button>
+
             </div>
 
             <!-- Aquí se inyectará el contenido específico -->

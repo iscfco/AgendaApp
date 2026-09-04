@@ -4,19 +4,17 @@ package services
 import (
 	"agenda-app/app/internal/errorhandling"
 	"agenda-app/app/internal/models"
+	"agenda-app/app/internal/models/filters"
 	"agenda-app/app/internal/repository"
 	"agenda-app/app/internal/utils"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
-
-	"gorm.io/datatypes"
 )
 
 type UserService interface {
 	RegisterNewUser(requestor, user models.User) (string, error)
-	ListUsers(requestor, query models.User) ([]models.User, error)
+	ListUsers(requestor models.User, filter filters.GetUsers) ([]models.User, int64, error)
 	UpdateUser(requestor, model models.User) error
 	GetUserByEmail(email string) (models.User, error)
 	GetUserById(id uint) (models.User, error)
@@ -33,11 +31,11 @@ type userService struct {
 func CheckRole(requestorRole, userRole models.UserRole) error {
 	switch requestorRole {
 	case models.UserRoleUser:
-		return fmt.Errorf("%w: usuario con rol 'User' no puede realizar esta accion", errorhandling.ErrForbidden)
+		return fmt.Errorf("%w: usuario con rol 'User' no puede realizar esta accion", errorhandling.ErrRole)
 	case models.UserRoleAdmin:
 		newUserIsAdminOrUser := userRole == models.UserRoleAdmin || userRole == models.UserRoleUser
 		if !newUserIsAdminOrUser {
-			return fmt.Errorf("%w: administradores solo pueden ejecutar acciones sobre los roles 'User' o 'Admin", errorhandling.ErrForbidden)
+			return fmt.Errorf("%w: administradores solo pueden ejecutar acciones sobre los roles 'User' o 'Admin", errorhandling.ErrRole)
 		}
 
 		return nil
@@ -65,8 +63,12 @@ func (s *userService) RegisterNewUser(requestor, newUser models.User) (string, e
 	}
 
 	// Valida que el correo electronico no exista
-	_, err := s.repo.ReadByQuery(models.User{Email: newUser.Email})
-	if err == nil {
+	userInDB, err := s.repo.ReadByQuery(models.User{Email: newUser.Email})
+	if err != nil {
+		return "", fmt.Errorf("%w: error intentando encontrar usuario con email '%s'", err, newUser.Email)
+	}
+
+	if len(userInDB) > 0 {
 		return "", fmt.Errorf("%w: el correo electronico '%s' ya esta registrado", errorhandling.ErrDuplicatedError, newUser.Email)
 	}
 
@@ -83,23 +85,13 @@ func (s *userService) RegisterNewUser(requestor, newUser models.User) (string, e
 	return newUser.Password, s.repo.Create(newUser)
 }
 
-func (s *userService) ListUsers(requestor, query models.User) ([]models.User, error) {
-	// Valida permisos
-	if query.Role != "" {
-		if err := CheckRole(requestor.Role, query.Role); err != nil {
-			return nil, err
-		}
+func (s *userService) ListUsers(requestor models.User, filter filters.GetUsers) ([]models.User, int64, error) {
+	// Only admin and superadmin can list users
+	if requestor.Role != models.UserRoleAdmin && requestor.Role != models.UserRoleSuperAdmin {
+		return nil, 0, fmt.Errorf("%w: usuario con rol '%s' no puede realizar esta accion", errorhandling.ErrForbidden, requestor.Role)
 	}
 
-	// Preparar query con las propiedades permitidas para la busqueda
-	query = models.User{
-		UserFullName: query.UserFullName,
-		Email:        query.Email,
-		Role:         query.Role,
-		Status:       query.Status,
-	}
-
-	return s.repo.ReadByQuery(query)
+	return s.repo.ReadByFilter(filter)
 }
 
 func (s *userService) UpdateUser(requestor, model models.User) error {
@@ -112,14 +104,19 @@ func (s *userService) UpdateUser(requestor, model models.User) error {
 		return fmt.Errorf("%w: error intentando encontrar usuario a modificar: %v", errorhandling.ErrInternal, err)
 	}
 
-	// Valida permisos
+	// Valida que pueda modificar al usuario
 	if err := CheckRole(requestor.Role, userInDB.Role); err != nil {
+		return err
+	}
+	// Validar que el nuevo rol sea permitido
+	if err := CheckRole(requestor.Role, model.Role); err != nil {
 		return err
 	}
 
 	// Preparar modelo con las propiedades permitidas para modificar
 	// - Prepara propiedades base
 	updates := models.User{
+		ID:           model.ID,
 		UserFullName: model.UserFullName,
 		Email:        model.Email,
 		Phone:        model.Phone,
@@ -130,35 +127,12 @@ func (s *userService) UpdateUser(requestor, model models.User) error {
 
 	// - Preparar pws si se modifica
 	if model.Password != "" {
-		updates.Password, err = utils.HashPassword(model.Password)
+		updates.PasswordHash, err = utils.HashPassword(model.Password)
 		if err != nil {
 			return fmt.Errorf("%w: error al encryptar password: %v", errorhandling.ErrInternal, err)
 		}
 
 		updates.RequiresPasswordUpdate = true
-	}
-
-	// - Preparar change history
-	{
-		// Convertir string a arreglo de users
-		currentChangeLog := []models.User{}
-		err = json.Unmarshal([]byte(userInDB.ChangeHistory), &currentChangeLog)
-		if err != nil {
-			return fmt.Errorf("%w: error al deserializar change log: %v", errorhandling.ErrInternal, err)
-		}
-
-		// Agregar user al arreglo
-		userInDB.StoredInChangeLogAt = time.Now()
-		currentChangeLog = append(currentChangeLog, userInDB)
-
-		// Convertir de nuevo a string
-		newChangeLog, err := json.Marshal(currentChangeLog)
-		if err != nil {
-			return fmt.Errorf("%w: error al serializar change log: %v", errorhandling.ErrInternal, err)
-		}
-
-		// Actualizar change log
-		updates.ChangeHistory = datatypes.JSON(newChangeLog)
 	}
 
 	return s.repo.Update(updates)

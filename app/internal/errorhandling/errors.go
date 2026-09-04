@@ -8,6 +8,7 @@ var (
 	ErrInternal        = errors.New("internal_error")
 	ErrUnauthorized    = errors.New("unauthorized")
 	ErrForbidden       = errors.New("forbidden")
+	ErrRole            = errors.New("error_role")
 	ErrDuplicatedError = errors.New("duplicated_error")
 	ErrNotFoundError   = errors.New("not_found")
 )

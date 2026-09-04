@@ -11,7 +11,7 @@ CREATE TABLE "user" (
     role                        VARCHAR(20) NOT NULL DEFAULT 'user',
     created_at                  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at                  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    status                      VARCHAR(20) NOT NULL DEFAULT 'active',
+    status                      VARCHAR(20) NOT NULL DEFAULT 'enabled',
     change_history              JSONB,
     stored_in_change_log_at     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT chk_user_role    CHECK (role IN ('superadmin', 'admin', 'user')),

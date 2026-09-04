@@ -3,23 +3,19 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     // Add event and perform the search
-    const boton = document.getElementById('list-orders-search-button');
-    boton.addEventListener('click', () => {
-        const authorName = document.getElementById('userAuthorNameVal').value;
-        const keyword = document.getElementById('keywordVal').value;
-        const client_name = document.getElementById('clientNameVal').value;
-        const from_date = document.getElementById('fromDateVal').value;
-        const to_date = document.getElementById('toDateVal').value;
-        const status = getStatusValue(document.getElementById('orderStatusButton').textContent);
+    const button = document.getElementById('list-users-search-button');
+    button.addEventListener('click', () => {
+        const username = document.getElementById('usernameVal').value;
+        const role = document.getElementById('roleVal').value;
+        const email = document.getElementById('emailVal').value;
+        const status = document.getElementById('statusVal').value;
         const limit = document.getElementById('recordsPerPageVal').value;
 
         const filtros = {
             show: 'true',
-            user_creator_name: authorName,
-            keyword: keyword,
-            client_name: client_name,
-            from_date: from_date,
-            to_date: to_date,
+            user_full_name: username,
+            role: role,
+            email: email,
             status: status,
 
             // Pagination fields
@@ -28,31 +24,10 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         const parametros = new URLSearchParams(filtros).toString();
-        window.location.href = `/?${parametros}`;
-    });
-
-    // Add event listener to allow select the Status filter
-    document.querySelectorAll('.order-status-value').forEach(item => {
-        item.addEventListener('click', function () {
-        const orderStatusButton = document.getElementById('orderStatusButton');
-        orderStatusButton.textContent = this.textContent;
-        });
+        window.location.href = `/user?${parametros}`;
     });
 
 });
-
-
-// Status Enum
-const StatusEnum = Object.freeze({
-  pendiente: "pending",
-  entregado: "delivered",
-  todos: "all" // Represents all statuses
-});
-
-function getStatusValue(key) {
-  const normalizedKey = key.trim().toLowerCase(); 
-  return StatusEnum[normalizedKey] || "";
-}
 
 // Pagination
 document.addEventListener("DOMContentLoaded", () => {

@@ -59,6 +59,7 @@ func main() {
 	// - Controllers
 	order := controllers.NewOrderController(orderSvc, userSvc)
 	login := controllers.NewLoginController(userSvc)
+	user := controllers.NewUserController(userSvc)
 
 	// Run API
 	{
@@ -83,12 +84,29 @@ func main() {
 
 		// Private router
 		r.Use(middlewares.AuthMiddleware())
-		r.GET("/", order.GetOrderView)
-		r.GET("/order/view", order.GetCreateOrderView)
-		r.POST("/order", order.Create)
-		r.GET("/order/:id/view", order.GetOrderDetailsView)
-		r.PUT("/order/:id", order.Update)
-		r.DELETE("/order/:id", order.Delete)
+		// Order routes
+		{
+			r.GET("/", order.GetOrderView)
+			r.GET("/order/view", order.GetCreateOrderView)
+			r.POST("/order", order.Create)
+			r.GET("/order/:id/view", order.GetOrderDetailsView)
+			r.PUT("/order/:id", order.Update)
+			r.DELETE("/order/:id", order.Delete)
+		}
+
+		// User routes
+		{
+			r.GET("/user", user.GetUsersView)
+			r.GET("/user/view", user.GetCreateUserView)
+			r.POST("/user", user.Create)
+			r.GET("/user/:id/view", user.GetUserDetailsView)
+			r.PUT("/user/:id", user.Update)
+		}
+
+		// Logout
+		{
+			r.GET("/logout", login.Logout)
+		}
 
 		r.Run(":8080")
 	}
