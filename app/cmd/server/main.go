@@ -67,6 +67,7 @@ func main() {
 		r := gin.Default()
 
 		r.Use(logs.GinZapMiddleware(logger))
+		r.Use(middlewares.BackupLocalMiddleware(cfg.DB, cfg.BackupDir))
 
 		// Static Files
 		staticSubFS, err := fs.Sub(views.ViewsFS, "static")

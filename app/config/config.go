@@ -14,6 +14,7 @@ type Config struct {
 	Env       string
 	DB        DB
 	Bootstrap Bootstrap
+	BackupDir string
 }
 
 type DB struct {
@@ -59,6 +60,7 @@ func LoadConfig() *Config {
 				Name:     getEnv("SUPER_ADMIN_NAME", ""),
 			},
 		},
+		BackupDir: getEnv("BACKUP_DIRECTORY", ""),
 	}
 }
 
