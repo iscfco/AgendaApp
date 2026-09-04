@@ -1,0 +1,94 @@
+  {{define "content"}}
+
+            <!-- ======================================= Contenidos ==================================== -->
+            <div class="col-9 vh-100 tab-content p-5 d-flex flex-column overflow-auto" id="v-pills-tabContent" style="background-color: rgb(236 236 236); padding: 2rem;">
+              
+              <!-- >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> DETALLES DEL PEDIDO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> -->
+              <div class="tab-pane fade show active" id="v-pills-pedidos" role="tabpanel" aria-labelledby="v-pills-pedidos-tab" tabindex="0">
+                <div class="d-flex flex-column flex-grow-1">
+                  <!-- ********************** Titulo ********************** -->
+                  <div>
+                    <p class="fs-4 fw-semibold mb-0" style="display: inline-block;">Crear Usuario</p>
+                  </div>
+                  
+                  <!-- ********************** Resultados ********************** -->
+                  <div class="mb-3" style="background-color: #ffffff; padding: 20px; border-radius: 10px; margin-top: 20px; width: 100%; ">
+                    <div class="d-flex flex-column flex-grow-1">
+                      
+                      <!-- ||||||||||||||||||| FORM ||||||||||||||||||| -->
+                      <div class="card w-100 mb-3 position-relative">
+                        <div class="card-body container p-4">
+                          <form id="create-user-form" class="needs-validation" novalidate>
+                              <input type="hidden" name="user_id" id="userDetails-ID" value="{{.user_id}}">
+
+                              <!-- Nombre del usuario -->
+                              <div class="mb-3">
+                                <label for="createUser-FullName" class="form-label">Nombre completo del usuario</label>
+                                <input type="text" id="createUser-FullName" class="form-control" placeholder="Nombre completo del usuario" required>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                              </div>
+
+                              <!-- Email -->
+                              <div class="mb-3">
+                                <label for="createUser-Email" class="form-label">Email</label>
+                                <input type="email" id="createUser-Email" class="form-control" placeholder="email@dominio.com" required>
+                                <div class="invalid-feedback">Este campo es obligatorio.</div>
+                              </div>
+
+                              <!-- PWD -->
+                              <div class="mb-3">
+                                <label for="createUser-Password" class="form-label">Contraseña</label>
+                                <input type="password" id="createUser-Password" class="form-control" placeholder="Contraseña" required>
+                              </div>
+
+                              <!-- Telefono del cliente -->
+                              <div class="mb-3">
+                                <label for="createUser-Phone" class="form-label">Telefono</label>
+                                <input type="number" id="createUser-Phone" class="form-control" placeholder="Ej: 9821234567" 
+                                    pattern="[0-835619724124409540890-9]+" required>
+                                <div class="invalid-feedback">Este campo es obligatorio y solo acepta numeros</div>
+                              </div>
+                              
+                              <!-- Rol -->
+                              <div class="mb-3">
+                                <label for="createUser-Role" class="my-label">Rol</label> <br>
+                                <select id="createUser-Role" name="role" class="form-select" >
+                                    {{if eq .role "superadmin"}}
+                                    <option value="superadmin"  {{ if eq .user_role "superadmin" }}selected{{ end }} >Super Administrador</option>
+                                    {{end}}
+                                    <option value="admin"       {{ if eq .user_role "admin"      }}selected{{ end }} >Administrador</option>
+                                    <option value="user"        {{ if eq .user_role "user"       }}selected{{ end }} >Usuario</option>
+                                </select>
+                              </div>
+
+                              <!-- Estado -->
+                              <div class="mb-3">
+                                <label for="createUser-Status" class="my-label">Estado</label> <br>
+                                <select id="createUser-Status" name="status" class="form-select" >
+                                    <option value="enabled"  {{ if eq .user_status "enabled"  }}selected{{ end }} >Activo</option>
+                                    <option value="disabled" {{ if eq .user_status "disabled" }}selected{{ end }} >Desactivado</option>
+                                </select>
+                              </div>
+
+                              <div class="d-flex justify-content-center">
+                                <button type="submit" class="btn btn-primary me-3" id="user-details-save-button">Crear</button>
+                              </div>
+                          </form>
+
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+  {{end}}
+
+
+  {{define "scripts"}}
+      <script src="/static/js/create-user.js"></script>
+  {{end}}
+
+  {{define "control-buttons"}}<!-- Empty -->{{end}}

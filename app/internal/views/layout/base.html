@@ -5,8 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title> {{.title}}</title>
-    <!-- TODO: Hacer local los estilos de Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
     <link href="/static/css/style.css" rel="stylesheet" >
   </head>
   <body class="bg-dark">
@@ -45,15 +44,18 @@
               </div>
 
               <!-- Botones de navegación -->
-              <button class="nav-link active" id="v-pills-pedidos-tab" type="button" role="tab" aria-controls="v-pills-pedidos" aria-selected="true">
+              <button class="nav-link {{ if .orderActive }}active{{ end }}" id="v-menu-pedidos-tab" type="button">
                 Pedidos
               </button>
-              <button class="nav-link" id="v-pills-usuarios-tab" data-bs-toggle="pill" data-bs-target="#v-pills-usuarios" type="button" role="tab" aria-controls="v-pills-usuarios" aria-selected="false">
+              {{if eq .role "superadmin" "admin"}}
+              <button class="nav-link {{ if .userActive }}active{{ end }}" id="v-menu-usuarios-tab"  type="button">
                 Usuarios
               </button>
-              <button class="nav-link mt-auto" id="v-logout-tab" type="button" role="tab" aria-controls="v-pills-usuarios" aria-selected="false">
+              {{end}}
+              <button class="nav-link mt-auto" id="v-menu-logout" type="button">
                   Cerrar Sesion
               </button>
+
             </div>
 
             <!-- Aquí se inyectará el contenido específico -->
@@ -64,7 +66,7 @@
     </div>
 
     <script src="/static/js/base.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="/static/js/bootstrap.bundle.min.js"></script>
     {{template "scripts" .}}
   </body>
 </html>

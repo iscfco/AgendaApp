@@ -1,6 +1,9 @@
 # 1. Usamos la imagen oficial de Go para desarrollo
 FROM golang:1.26-alpine
 
+# 1.5. Instalar el cliente de PostgreSQL 18 (incluye pg_dump) desde el repositorio edge
+RUN apk update && apk add --no-cache --repository=http://alpinelinux.org postgresql-client
+
 # 2. Creamos la carpeta de trabajo dentro del contenedor
 WORKDIR /agenda-app
 
@@ -21,3 +24,4 @@ EXPOSE 8080
 
 # 8. Ejecutamos Air en cuanto el contenedor se encienda
 CMD ["air", "--build.cmd", "go build -o ./bin/api ./app/cmd/server/main.go", "--build.entrypoint", "./bin/api", "--build.poll=true"]
+

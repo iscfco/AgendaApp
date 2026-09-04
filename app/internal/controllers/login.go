@@ -125,3 +125,19 @@ func (ctrl *LoginController) Login(c *gin.Context) {
 
 	c.Redirect(http.StatusSeeOther, "/")
 }
+
+func (ctrl *LoginController) Logout(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	// Obtenemos los datos del usuario desde la sesion
+	tokenDeSesion, err := c.Cookie(utils.SessionCookieHeader)
+	if err != nil { // El error significa que la cookie no existe o expiró
+		logs.Logger(ctx).Error("No se pudo obtener el token de sesión", zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No se pudo obtener el token de sesión"})
+		return
+	}
+
+	sessions.EliminarSesion(tokenDeSesion)
+
+	c.Redirect(http.StatusSeeOther, "/")
+}

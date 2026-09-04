@@ -3,6 +3,7 @@ package config
 import (
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -14,6 +15,7 @@ type Config struct {
 	Env       string
 	DB        DB
 	Bootstrap Bootstrap
+	Backup    Backup
 }
 
 type DB struct {
@@ -34,11 +36,22 @@ type SuperAdmin struct {
 	Name     string
 }
 
+type Backup struct {
+	Directory    string
+	MaxRetention int
+}
+
 // LoadConfig lee el archivo .env y mapea los valores
 func LoadConfig() *Config {
 	// Intenta cargar el archivo .env (si no existe, continuará buscando en el sistema)
 	if err := godotenv.Load(); err != nil {
 		log.Println("Aviso: No se encontró el archivo .env, usando variables de entorno del sistema")
+	}
+
+	backupMaxRetentionStr := getEnv("BACKUP_MAX_RETENTION", "10")
+	backupMaxRetention, err := strconv.Atoi(backupMaxRetentionStr)
+	if err != nil {
+		log.Fatalf("Error al parsear la variable de entorno BACKUP_MAX_RETENTION: %v", err)
 	}
 
 	return &Config{
@@ -58,6 +71,10 @@ func LoadConfig() *Config {
 				Password: getEnv("SUPER_ADMIN_PASSWORD", ""),
 				Name:     getEnv("SUPER_ADMIN_NAME", ""),
 			},
+		},
+		Backup: Backup{
+			Directory:    getEnv("BACKUP_DIRECTORY", ""),
+			MaxRetention: backupMaxRetention,
 		},
 	}
 }

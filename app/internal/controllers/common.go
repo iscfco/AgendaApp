@@ -30,3 +30,45 @@ func getUserFromSession(c *gin.Context) (user models.User, err error) {
 
 	return user, nil
 }
+
+func generatePages(totalRecords, limit, currentPage int) ([]int, int) {
+	if totalRecords == 0 {
+		return []int{}, 0
+	}
+
+	totalPages := int(totalRecords) / limit
+	if int(totalRecords)%limit != 0 || totalPages == 0 {
+		totalPages++ // Si sobran registros, añade una página extra
+	}
+
+	// Generate pages
+	var pages []int
+	if totalPages <= 7 {
+		// Generate from 1 to totalPages
+		pages = make([]int, totalPages)
+		for i := range totalPages {
+			pages[i] = i + 1
+		}
+	} else {
+		pages = make([]int, 7)
+		startingPage := currentPage - 3
+		endingPage := currentPage + 3
+
+		if endingPage > totalPages { // Verify if we can add more pages >>
+			endingPage = totalPages
+			startingPage = totalPages - 6
+		}
+
+		if startingPage < 1 { // Verify if we can add more pages <<
+			startingPage = 1
+			endingPage = 7
+		}
+
+		// Generate from startingPage to endingPage
+		for i := 0; i < 7; i++ {
+			pages[i] = startingPage + i
+		}
+	}
+
+	return pages, totalPages
+}
